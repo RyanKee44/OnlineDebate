@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineDebate.Configurations.Entities;
-using OnlineDebate.Domain;
+using OnlineDebate.Data;
 
 namespace OnlineDebate.Data
 {
-    public class OnlineDebateContext : DbContext
+    public class OnlineDebateContext(DbContextOptions<OnlineDebateContext> options) : IdentityDbContext<OnlineDebateUser>(options)
     {
-        public OnlineDebateContext (DbContextOptions<OnlineDebateContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<OnlineDebate.Domain.User> User { get; set; } = default!;
         public DbSet<OnlineDebate.Domain.Topic> Topic { get; set; } = default!;
         public DbSet<OnlineDebate.Domain.Argument> Argument { get; set; } = default!;

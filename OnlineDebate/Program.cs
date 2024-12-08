@@ -34,7 +34,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 builder.Services.AddIdentityCore<OnlineDebateUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<IdentityContext>()
+    .AddEntityFrameworkStores<OnlineDebateContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 

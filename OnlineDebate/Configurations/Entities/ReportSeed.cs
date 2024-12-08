@@ -18,7 +18,7 @@ namespace OnlineDebate.Configurations.Entities
                 },
                 new Report
                 {
-                    Id = 1,
+                    Id = 2,
                     DateCreated = DateTime.Now,
                     ReportReason = "Irrelavent",
                     ReportType = "Not Relavent",
