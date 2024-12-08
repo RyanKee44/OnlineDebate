@@ -1,5 +1,6 @@
 ﻿@page "/topics/create"
 @using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Data
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -40,7 +41,7 @@
                 <InputNumber id="userid" @bind-Value="Topic.UserId" class="form-control" /> 
                 <ValidationMessage For="() => Topic.UserId" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="datecreated" class="form-label">DateCreated:</label> 
                 <InputDate id="datecreated" @bind-Value="Topic.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Topic.DateCreated" class="text-danger" /> 
@@ -58,10 +59,36 @@
     [SupplyParameterFromForm]
     private Topic Topic { get; set; } = new();
 
+    //Create userId string to store the user id, default value is "System".
+    private string userId = "System";
+    //Inject the AuthenticationStateProvider to get the user id.
+    @inject AuthenticationStateProvider authenticationStateProvider
+    //Override the OnInitialized method to get the user id.
+    protected override async void OnInitialized()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        // Get the userId claim
+        var userIdClaim = user.FindFirst("userId");
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+        }
+
+    }
+
+
+
+
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddTopic()
     {
         using var context = DbFactory.CreateDbContext();
+
+        //Set the userId to the CreatedBy and UpdatedBy fields.
+        
+        Topic.DateCreated = DateTime.Now;
+
         context.Topic.Add(Topic);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/topics");

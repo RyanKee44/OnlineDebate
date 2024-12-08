@@ -3,8 +3,10 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using OnlineDebate.Domain
 @using OnlineDebate.Data
+@using Microsoft.AspNetCore.Authorization
 @implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@attribute [Authorize(Roles = "Administrator, User")]
 
 <PageTitle>Index</PageTitle>
 
@@ -25,7 +27,9 @@
     <TemplateColumn Context="argument">
         <a href="@($"arguments/edit?id={argument.Id}")">Edit</a> |
         <a href="@($"arguments/details?id={argument.Id}")">Details</a> |
-        <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
+        <AuthorizeView Roles="Administrator">
+            <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
+        </AuthorizeView>
     </TemplateColumn>
 </QuickGrid>
 
@@ -36,6 +40,6 @@
     {
         context = DbFactory.CreateDbContext();
     }
-
+    
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

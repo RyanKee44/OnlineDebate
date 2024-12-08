@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using OnlineDebate.Data
+@using OnlineDebate.Domain
 
 @inject UserManager<OnlineDebateUser> UserManager
 @inject IUserStore<OnlineDebateUser> UserStore
@@ -130,6 +131,8 @@
 
         await SignInManager.SignInAsync(user, isPersistent: false);
         RedirectManager.RedirectTo(ReturnUrl);
+
+
     }
 
     private OnlineDebateUser CreateUser()

@@ -69,14 +69,20 @@ else
     [SupplyParameterFromForm]
     private Topic? Topic { get; set; }
 
+    //Create userId string to store the user id, default value is "System".
+    private string userId = "System";
+    //Inject the AuthenticationStateProvider to get the user id.
+    @inject AuthenticationStateProvider authenticationStateProvider
+
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Topic ??= await context.Topic.FirstOrDefaultAsync(m => m.Id == Id);
-
-        if (Topic is null)
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        // Get the userId claim
+        var userIdClaim = user.FindFirst("userId");
+        if (userIdClaim != null)
         {
-            NavigationManager.NavigateTo("notfound");
+            userId = userIdClaim.Value;
         }
     }
 
@@ -85,6 +91,9 @@ else
     private async Task UpdateTopic()
     {
         using var context = DbFactory.CreateDbContext();
+
+        Topic.DateCreated = DateTime.Now;
+
         context.Attach(Topic!).State = EntityState.Modified;
 
         try

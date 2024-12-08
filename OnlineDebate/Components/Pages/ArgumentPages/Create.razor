@@ -1,6 +1,7 @@
 ﻿@page "/arguments/create"
 @using Microsoft.EntityFrameworkCore
 @using OnlineDebate.Domain
+@using OnlineDebate.Data
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 
@@ -36,9 +37,17 @@
                 <ValidationMessage For="() => Argument.UserId" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="topicid" class="form-label">TopicId:</label> 
-                <InputNumber id="topicid" @bind-Value="Argument.TopicId" class="form-control" /> 
-                <ValidationMessage For="() => Argument.TopicId" class="text-danger" /> 
+                <label for="topicid" class="form-label">TopicId:</label>
+                <InputSelect id="topicid" @bind-Value="Argument.TopicId" class="form-control">
+                    <option value="">-- Select Topic --</option>
+                    @if (Topics != null)
+                    {
+                        foreach (var topic in Topics)
+                        {
+                            <option value="@topic.Id">@topic.TopicName</option>
+                        }
+                    }
+                </InputSelect>
             </div>        
             <div class="mb-3">
                 <label for="datecreated" class="form-label">DateCreated:</label> 
@@ -57,6 +66,15 @@
 @code {
     [SupplyParameterFromForm]
     private Argument Argument { get; set; } = new();
+
+    private OnlineDebateContext context = default!;
+    private IList<Topic> Topics;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        Topics = context.Topic.ToList();
+    }
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddArgument()
