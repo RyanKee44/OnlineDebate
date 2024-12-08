@@ -1,5 +1,6 @@
 ﻿@page "/leaderboards/create"
 @using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Data
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -37,10 +38,19 @@
             </div>        
             <div class="mb-3">
                 <label for="topicid" class="form-label">TopicId:</label> 
-                <InputNumber id="topicid" @bind-Value="Leaderboard.TopicId" class="form-control" /> 
-                <ValidationMessage For="() => Leaderboard.TopicId" class="text-danger" /> 
+                <label for="topicid" class="form-label">TopicId:</label>
+                <InputSelect id="topicid" @bind-Value="Leaderboard.TopicId" class="form-control">
+                    <option value="">-- Select Topic --</option>
+                    @if (Topics != null)
+                    {
+                        foreach (var topic in Topics)
+                        {
+                            <option value="@topic.Id">@topic.TopicName</option>
+                        }
+                    }
+                </InputSelect>
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="datecreated" class="form-label">DateCreated:</label> 
                 <InputDate id="datecreated" @bind-Value="Leaderboard.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Leaderboard.DateCreated" class="text-danger" /> 
@@ -58,10 +68,20 @@
     [SupplyParameterFromForm]
     private Leaderboard Leaderboard { get; set; } = new();
 
+    private OnlineDebateContext context = default!;
+    private IList<Topic> Topics;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        Topics = context.Topic.ToList();
+    }
+
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddLeaderboard()
     {
         using var context = DbFactory.CreateDbContext();
+        Leaderboard.DateCreated = DateTime.Now;
         context.Leaderboard.Add(Leaderboard);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/leaderboards");

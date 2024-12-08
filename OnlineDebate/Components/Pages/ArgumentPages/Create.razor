@@ -49,7 +49,7 @@
                     }
                 </InputSelect>
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="datecreated" class="form-label">DateCreated:</label> 
                 <InputDate id="datecreated" @bind-Value="Argument.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Argument.DateCreated" class="text-danger" /> 
@@ -80,6 +80,7 @@
     private async Task AddArgument()
     {
         using var context = DbFactory.CreateDbContext();
+        Argument.DateCreated = DateTime.Now;
         context.Argument.Add(Argument);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/arguments");

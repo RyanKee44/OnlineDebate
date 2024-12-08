@@ -1,5 +1,6 @@
 ﻿@page "/reports/create"
 @using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Data
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -32,15 +33,31 @@
             </div>        
             <div class="mb-3">
                 <label for="argumentid" class="form-label">ArgumentId:</label> 
-                <InputNumber id="argumentid" @bind-Value="Report.ArgumentId" class="form-control" /> 
-                <ValidationMessage For="() => Report.ArgumentId" class="text-danger" /> 
+                <InputSelect id="argumentid" @bind-Value="Report.ArgumentId" class="form-control">
+                    <option value="">-- Select Argument --</option>
+                    @if (Arguments != null)
+                    {
+                        foreach (var arguement in Arguments)
+                        {
+                            <option value="@arguement.Id">@arguement.ArgumentContent</option>
+                        }
+                    }
+                </InputSelect>
             </div>        
             <div class="mb-3">
                 <label for="commentid" class="form-label">CommentId:</label> 
-                <InputNumber id="commentid" @bind-Value="Report.CommentId" class="form-control" /> 
-                <ValidationMessage For="() => Report.CommentId" class="text-danger" /> 
+                <InputSelect id="commentid" @bind-Value="Report.CommentId" class="form-control">
+                    <option value="">-- Select Comment --</option>
+                    @if (Arguments != null)
+                    {
+                        foreach (var comment in Comments)
+                        {
+                            <option value="@comment.Id">@comment.CommentContent</option>
+                        }
+                    }
+                </InputSelect>
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="datecreated" class="form-label">DateCreated:</label> 
                 <InputDate id="datecreated" @bind-Value="Report.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Report.DateCreated" class="text-danger" /> 
@@ -58,10 +75,22 @@
     [SupplyParameterFromForm]
     private Report Report { get; set; } = new();
 
+    private OnlineDebateContext context = default!;
+    private IList<Argument> Arguments;
+    private IList<Comment> Comments;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        Arguments = context.Argument.ToList();
+        Comments = context.Comment.ToList();
+    }
+
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddReport()
     {
         using var context = DbFactory.CreateDbContext();
+        Report.DateCreated = DateTime.Now;
         context.Report.Add(Report);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/reports");

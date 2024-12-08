@@ -1,5 +1,6 @@
 ﻿@page "/comments/create"
 @using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Data
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -37,10 +38,18 @@
             </div>        
             <div class="mb-3">
                 <label for="argumentid" class="form-label">ArgumentId:</label> 
-                <InputNumber id="argumentid" @bind-Value="Comment.ArgumentId" class="form-control" /> 
-                <ValidationMessage For="() => Comment.ArgumentId" class="text-danger" /> 
+                <InputSelect id="argumentid" @bind-Value="Comment.ArgumentId" class="form-control">
+                    <option value="">-- Select Argument --</option>
+                    @if (Arguments != null)
+                    {
+                        foreach (var arguement in Arguments)
+                        {
+                            <option value="@arguement.Id">@arguement.ArgumentContent</option>
+                        }
+                    }
+                </InputSelect>
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="datecreated" class="form-label">DateCreated:</label> 
                 <InputDate id="datecreated" @bind-Value="Comment.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Comment.DateCreated" class="text-danger" /> 
@@ -58,10 +67,20 @@
     [SupplyParameterFromForm]
     private Comment Comment { get; set; } = new();
 
+    private OnlineDebateContext context = default!;
+    private IList<Argument> Arguments;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        Arguments = context.Argument.ToList();
+    }
+
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddComment()
     {
         using var context = DbFactory.CreateDbContext();
+        Comment.DateCreated = DateTime.Now;
         context.Comment.Add(Comment);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/comments");
