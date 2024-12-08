@@ -1,0 +1,75 @@
+﻿@page "/arguments/delete"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Argument</h2>
+    <hr />
+    @if (argument is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ArgumentContent</dt>
+            <dd class="col-sm-10">@argument.ArgumentContent</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ArgumentStance</dt>
+            <dd class="col-sm-10">@argument.ArgumentStance</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ArgumentLike</dt>
+            <dd class="col-sm-10">@argument.ArgumentLike</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@argument.UserId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">TopicId</dt>
+            <dd class="col-sm-10">@argument.TopicId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@argument.DateCreated</dd>
+        </dl>
+        <EditForm method="post" Model="argument" OnValidSubmit="DeleteArgument" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(argument is null)">Delete</button> |
+            <a href="/arguments">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Argument? argument;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        argument = await context.Argument.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (argument is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteArgument()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Argument.Remove(argument!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/arguments");
+    }
+}

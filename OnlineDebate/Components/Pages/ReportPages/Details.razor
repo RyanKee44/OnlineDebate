@@ -1,0 +1,56 @@
+﻿@page "/reports/details"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Report</h2>
+    <hr />
+    @if (report is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ReportReason</dt>
+            <dd class="col-sm-10">@report.ReportReason</dd>
+            <dt class="col-sm-2">ReportType</dt>
+            <dd class="col-sm-10">@report.ReportType</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@report.UserId</dd>
+            <dt class="col-sm-2">ArgumentId</dt>
+            <dd class="col-sm-10">@report.ArgumentId</dd>
+            <dt class="col-sm-2">CommentId</dt>
+            <dd class="col-sm-10">@report.CommentId</dd>
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@report.DateCreated</dd>
+        </dl>
+        <div>
+            <a href="@($"/reports/edit?id={report.Id}")">Edit</a> |
+            <a href="@($"/reports")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Report? report;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        report = await context.Report.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (report is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

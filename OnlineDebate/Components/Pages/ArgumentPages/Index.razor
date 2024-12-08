@@ -1,0 +1,41 @@
+﻿@page "/arguments"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OnlineDebate.Domain
+@using OnlineDebate.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="arguments/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Argument">
+    <PropertyColumn Property="argument => argument.ArgumentContent" />
+    <PropertyColumn Property="argument => argument.ArgumentStance" />
+    <PropertyColumn Property="argument => argument.ArgumentLike" />
+    <PropertyColumn Property="argument => argument.UserId" />
+    <PropertyColumn Property="argument => argument.TopicId" />
+    <PropertyColumn Property="argument => argument.DateCreated" />
+
+    <TemplateColumn Context="argument">
+        <a href="@($"arguments/edit?id={argument.Id}")">Edit</a> |
+        <a href="@($"arguments/details?id={argument.Id}")">Details</a> |
+        <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private OnlineDebateContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -1,0 +1,41 @@
+﻿@page "/leaderboards"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OnlineDebate.Domain
+@using OnlineDebate.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="leaderboards/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Leaderboard">
+    <PropertyColumn Property="leaderboard => leaderboard.LeaderboardRank" />
+    <PropertyColumn Property="leaderboard => leaderboard.LeaderboardPoints" />
+    <PropertyColumn Property="leaderboard => leaderboard.LeaderboardRefresh" />
+    <PropertyColumn Property="leaderboard => leaderboard.UserId" />
+    <PropertyColumn Property="leaderboard => leaderboard.TopicId" />
+    <PropertyColumn Property="leaderboard => leaderboard.DateCreated" />
+
+    <TemplateColumn Context="leaderboard">
+        <a href="@($"leaderboards/edit?id={leaderboard.Id}")">Edit</a> |
+        <a href="@($"leaderboards/details?id={leaderboard.Id}")">Details</a> |
+        <a href="@($"leaderboards/delete?id={leaderboard.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private OnlineDebateContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

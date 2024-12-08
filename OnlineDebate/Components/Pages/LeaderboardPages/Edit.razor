@@ -1,0 +1,114 @@
+﻿@page "/leaderboards/edit"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Leaderboard</h2>
+<hr />
+@if (Leaderboard is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Leaderboard" OnValidSubmit="UpdateLeaderboard" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Leaderboard.Id" value="@Leaderboard.Id" />
+                <div class="mb-3">
+                    <label for="leaderboardrank" class="form-label">LeaderboardRank:</label>
+                    <InputNumber id="leaderboardrank" @bind-Value="Leaderboard.LeaderboardRank" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.LeaderboardRank" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="leaderboardpoints" class="form-label">LeaderboardPoints:</label>
+                    <InputNumber id="leaderboardpoints" @bind-Value="Leaderboard.LeaderboardPoints" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.LeaderboardPoints" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="leaderboardrefresh" class="form-label">LeaderboardRefresh:</label>
+                    <InputNumber id="leaderboardrefresh" @bind-Value="Leaderboard.LeaderboardRefresh" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.LeaderboardRefresh" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="userid" class="form-label">UserId:</label>
+                    <InputNumber id="userid" @bind-Value="Leaderboard.UserId" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.UserId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="topicid" class="form-label">TopicId:</label>
+                    <InputNumber id="topicid" @bind-Value="Leaderboard.TopicId" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.TopicId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="datecreated" class="form-label">DateCreated:</label>
+                    <InputDate id="datecreated" @bind-Value="Leaderboard.DateCreated" class="form-control" />
+                    <ValidationMessage For="() => Leaderboard.DateCreated" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/leaderboards">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Leaderboard? Leaderboard { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Leaderboard ??= await context.Leaderboard.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Leaderboard is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateLeaderboard()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Leaderboard!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!LeaderboardExists(Leaderboard!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/leaderboards");
+    }
+
+    private bool LeaderboardExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Leaderboard.Any(e => e.Id == id);
+    }
+}

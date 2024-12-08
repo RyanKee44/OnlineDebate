@@ -1,0 +1,56 @@
+﻿@page "/leaderboards/details"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Leaderboard</h2>
+    <hr />
+    @if (leaderboard is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">LeaderboardRank</dt>
+            <dd class="col-sm-10">@leaderboard.LeaderboardRank</dd>
+            <dt class="col-sm-2">LeaderboardPoints</dt>
+            <dd class="col-sm-10">@leaderboard.LeaderboardPoints</dd>
+            <dt class="col-sm-2">LeaderboardRefresh</dt>
+            <dd class="col-sm-10">@leaderboard.LeaderboardRefresh</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@leaderboard.UserId</dd>
+            <dt class="col-sm-2">TopicId</dt>
+            <dd class="col-sm-10">@leaderboard.TopicId</dd>
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@leaderboard.DateCreated</dd>
+        </dl>
+        <div>
+            <a href="@($"/leaderboards/edit?id={leaderboard.Id}")">Edit</a> |
+            <a href="@($"/leaderboards")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Leaderboard? leaderboard;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        leaderboard = await context.Leaderboard.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (leaderboard is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

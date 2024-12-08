@@ -1,0 +1,69 @@
+﻿@page "/comments/create"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Comment</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Comment" OnValidSubmit="AddComment" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="commentcontent" class="form-label">CommentContent:</label> 
+                <InputText id="commentcontent" @bind-Value="Comment.CommentContent" class="form-control" /> 
+                <ValidationMessage For="() => Comment.CommentContent" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="commentstance" class="form-label">CommentStance:</label> 
+                <InputCheckbox id="commentstance" @bind-Value="Comment.CommentStance" class="form-check-input" /> 
+                <ValidationMessage For="() => Comment.CommentStance" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="commentlike" class="form-label">CommentLike:</label> 
+                <InputNumber id="commentlike" @bind-Value="Comment.CommentLike" class="form-control" /> 
+                <ValidationMessage For="() => Comment.CommentLike" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputNumber id="userid" @bind-Value="Comment.UserId" class="form-control" /> 
+                <ValidationMessage For="() => Comment.UserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="argumentid" class="form-label">ArgumentId:</label> 
+                <InputNumber id="argumentid" @bind-Value="Comment.ArgumentId" class="form-control" /> 
+                <ValidationMessage For="() => Comment.ArgumentId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datecreated" class="form-label">DateCreated:</label> 
+                <InputDate id="datecreated" @bind-Value="Comment.DateCreated" class="form-control" /> 
+                <ValidationMessage For="() => Comment.DateCreated" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/comments">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Comment Comment { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddComment()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Comment.Add(Comment);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/comments");
+    }
+}

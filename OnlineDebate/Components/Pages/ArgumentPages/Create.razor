@@ -1,0 +1,69 @@
+﻿@page "/arguments/create"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Argument</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Argument" OnValidSubmit="AddArgument" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="argumentcontent" class="form-label">ArgumentContent:</label> 
+                <InputText id="argumentcontent" @bind-Value="Argument.ArgumentContent" class="form-control" /> 
+                <ValidationMessage For="() => Argument.ArgumentContent" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="argumentstance" class="form-label">ArgumentStance:</label> 
+                <InputCheckbox id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-check-input" /> 
+                <ValidationMessage For="() => Argument.ArgumentStance" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="argumentlike" class="form-label">ArgumentLike:</label> 
+                <InputNumber id="argumentlike" @bind-Value="Argument.ArgumentLike" class="form-control" /> 
+                <ValidationMessage For="() => Argument.ArgumentLike" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputNumber id="userid" @bind-Value="Argument.UserId" class="form-control" /> 
+                <ValidationMessage For="() => Argument.UserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="topicid" class="form-label">TopicId:</label> 
+                <InputNumber id="topicid" @bind-Value="Argument.TopicId" class="form-control" /> 
+                <ValidationMessage For="() => Argument.TopicId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datecreated" class="form-label">DateCreated:</label> 
+                <InputDate id="datecreated" @bind-Value="Argument.DateCreated" class="form-control" /> 
+                <ValidationMessage For="() => Argument.DateCreated" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/arguments">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Argument Argument { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddArgument()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Argument.Add(Argument);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/arguments");
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/topics/details"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Topic</h2>
+    <hr />
+    @if (topic is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">TopicName</dt>
+            <dd class="col-sm-10">@topic.TopicName</dd>
+            <dt class="col-sm-2">TopicCategory</dt>
+            <dd class="col-sm-10">@topic.TopicCategory</dd>
+            <dt class="col-sm-2">TopicDescription</dt>
+            <dd class="col-sm-10">@topic.TopicDescription</dd>
+            <dt class="col-sm-2">TopicRules</dt>
+            <dd class="col-sm-10">@topic.TopicRules</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@topic.UserId</dd>
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@topic.DateCreated</dd>
+        </dl>
+        <div>
+            <a href="@($"/topics/edit?id={topic.Id}")">Edit</a> |
+            <a href="@($"/topics")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Topic? topic;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        topic = await context.Topic.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (topic is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/arguments/details"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Argument</h2>
+    <hr />
+    @if (argument is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ArgumentContent</dt>
+            <dd class="col-sm-10">@argument.ArgumentContent</dd>
+            <dt class="col-sm-2">ArgumentStance</dt>
+            <dd class="col-sm-10">@argument.ArgumentStance</dd>
+            <dt class="col-sm-2">ArgumentLike</dt>
+            <dd class="col-sm-10">@argument.ArgumentLike</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@argument.UserId</dd>
+            <dt class="col-sm-2">TopicId</dt>
+            <dd class="col-sm-10">@argument.TopicId</dd>
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@argument.DateCreated</dd>
+        </dl>
+        <div>
+            <a href="@($"/arguments/edit?id={argument.Id}")">Edit</a> |
+            <a href="@($"/arguments")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Argument? argument;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        argument = await context.Argument.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (argument is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

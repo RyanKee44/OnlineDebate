@@ -1,0 +1,114 @@
+﻿@page "/topics/edit"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Topic</h2>
+<hr />
+@if (Topic is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Topic" OnValidSubmit="UpdateTopic" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Topic.Id" value="@Topic.Id" />
+                <div class="mb-3">
+                    <label for="topicname" class="form-label">TopicName:</label>
+                    <InputText id="topicname" @bind-Value="Topic.TopicName" class="form-control" />
+                    <ValidationMessage For="() => Topic.TopicName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="topiccategory" class="form-label">TopicCategory:</label>
+                    <InputText id="topiccategory" @bind-Value="Topic.TopicCategory" class="form-control" />
+                    <ValidationMessage For="() => Topic.TopicCategory" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="topicdescription" class="form-label">TopicDescription:</label>
+                    <InputText id="topicdescription" @bind-Value="Topic.TopicDescription" class="form-control" />
+                    <ValidationMessage For="() => Topic.TopicDescription" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="topicrules" class="form-label">TopicRules:</label>
+                    <InputText id="topicrules" @bind-Value="Topic.TopicRules" class="form-control" />
+                    <ValidationMessage For="() => Topic.TopicRules" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="userid" class="form-label">UserId:</label>
+                    <InputNumber id="userid" @bind-Value="Topic.UserId" class="form-control" />
+                    <ValidationMessage For="() => Topic.UserId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="datecreated" class="form-label">DateCreated:</label>
+                    <InputDate id="datecreated" @bind-Value="Topic.DateCreated" class="form-control" />
+                    <ValidationMessage For="() => Topic.DateCreated" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/topics">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Topic? Topic { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Topic ??= await context.Topic.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Topic is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateTopic()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Topic!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!TopicExists(Topic!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/topics");
+    }
+
+    private bool TopicExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Topic.Any(e => e.Id == id);
+    }
+}

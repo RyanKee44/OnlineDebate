@@ -1,0 +1,69 @@
+﻿@page "/reports/create"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Report</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Report" OnValidSubmit="AddReport" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="reportreason" class="form-label">ReportReason:</label> 
+                <InputText id="reportreason" @bind-Value="Report.ReportReason" class="form-control" /> 
+                <ValidationMessage For="() => Report.ReportReason" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="reporttype" class="form-label">ReportType:</label> 
+                <InputText id="reporttype" @bind-Value="Report.ReportType" class="form-control" /> 
+                <ValidationMessage For="() => Report.ReportType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputNumber id="userid" @bind-Value="Report.UserId" class="form-control" /> 
+                <ValidationMessage For="() => Report.UserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="argumentid" class="form-label">ArgumentId:</label> 
+                <InputNumber id="argumentid" @bind-Value="Report.ArgumentId" class="form-control" /> 
+                <ValidationMessage For="() => Report.ArgumentId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="commentid" class="form-label">CommentId:</label> 
+                <InputNumber id="commentid" @bind-Value="Report.CommentId" class="form-control" /> 
+                <ValidationMessage For="() => Report.CommentId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datecreated" class="form-label">DateCreated:</label> 
+                <InputDate id="datecreated" @bind-Value="Report.DateCreated" class="form-control" /> 
+                <ValidationMessage For="() => Report.DateCreated" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/reports">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Report Report { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddReport()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Report.Add(Report);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/reports");
+    }
+}

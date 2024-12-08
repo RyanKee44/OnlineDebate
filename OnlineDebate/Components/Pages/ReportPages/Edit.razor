@@ -1,0 +1,114 @@
+﻿@page "/reports/edit"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Report</h2>
+<hr />
+@if (Report is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Report" OnValidSubmit="UpdateReport" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Report.Id" value="@Report.Id" />
+                <div class="mb-3">
+                    <label for="reportreason" class="form-label">ReportReason:</label>
+                    <InputText id="reportreason" @bind-Value="Report.ReportReason" class="form-control" />
+                    <ValidationMessage For="() => Report.ReportReason" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="reporttype" class="form-label">ReportType:</label>
+                    <InputText id="reporttype" @bind-Value="Report.ReportType" class="form-control" />
+                    <ValidationMessage For="() => Report.ReportType" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="userid" class="form-label">UserId:</label>
+                    <InputNumber id="userid" @bind-Value="Report.UserId" class="form-control" />
+                    <ValidationMessage For="() => Report.UserId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="argumentid" class="form-label">ArgumentId:</label>
+                    <InputNumber id="argumentid" @bind-Value="Report.ArgumentId" class="form-control" />
+                    <ValidationMessage For="() => Report.ArgumentId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="commentid" class="form-label">CommentId:</label>
+                    <InputNumber id="commentid" @bind-Value="Report.CommentId" class="form-control" />
+                    <ValidationMessage For="() => Report.CommentId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="datecreated" class="form-label">DateCreated:</label>
+                    <InputDate id="datecreated" @bind-Value="Report.DateCreated" class="form-control" />
+                    <ValidationMessage For="() => Report.DateCreated" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/reports">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Report? Report { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Report ??= await context.Report.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Report is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateReport()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Report!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ReportExists(Report!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/reports");
+    }
+
+    private bool ReportExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Report.Any(e => e.Id == id);
+    }
+}

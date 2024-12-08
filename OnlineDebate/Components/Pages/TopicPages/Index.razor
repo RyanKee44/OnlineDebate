@@ -1,0 +1,41 @@
+﻿@page "/topics"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OnlineDebate.Domain
+@using OnlineDebate.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="topics/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Topic">
+    <PropertyColumn Property="topic => topic.TopicName" />
+    <PropertyColumn Property="topic => topic.TopicCategory" />
+    <PropertyColumn Property="topic => topic.TopicDescription" />
+    <PropertyColumn Property="topic => topic.TopicRules" />
+    <PropertyColumn Property="topic => topic.UserId" />
+    <PropertyColumn Property="topic => topic.DateCreated" />
+
+    <TemplateColumn Context="topic">
+        <a href="@($"topics/edit?id={topic.Id}")">Edit</a> |
+        <a href="@($"topics/details?id={topic.Id}")">Details</a> |
+        <a href="@($"topics/delete?id={topic.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private OnlineDebateContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
