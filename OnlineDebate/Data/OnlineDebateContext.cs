@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using CarRentalManagement.Configurations.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineDebate.Configurations.Entities;
 using OnlineDebate.Data;
@@ -22,6 +23,9 @@ namespace OnlineDebate.Data
             builder.ApplyConfiguration(new ArgumentSeed());
             builder.ApplyConfiguration(new CommentSeed());
             builder.ApplyConfiguration(new ReportSeed());
+            builder.ApplyConfiguration(new RoleSeed());
+            builder.ApplyConfiguration(new UserSeed());
+            builder.ApplyConfiguration(new UserRoleSeed());
         }
     }
 }
