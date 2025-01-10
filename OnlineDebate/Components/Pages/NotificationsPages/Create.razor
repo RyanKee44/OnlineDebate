@@ -1,0 +1,59 @@
+﻿@page "/notifications/create"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Notifications</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Notifications" OnValidSubmit="AddNotifications" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="notificationname" class="form-label">NotificationName:</label> 
+                <InputText id="notificationname" @bind-Value="Notifications.NotificationName" class="form-control" /> 
+                <ValidationMessage For="() => Notifications.NotificationName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputNumber id="userid" @bind-Value="Notifications.UserId" class="form-control" /> 
+                <ValidationMessage For="() => Notifications.UserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="topicid" class="form-label">TopicId:</label> 
+                <InputNumber id="topicid" @bind-Value="Notifications.TopicId" class="form-control" /> 
+                <ValidationMessage For="() => Notifications.TopicId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datecreated" class="form-label">DateCreated:</label> 
+                <InputDate id="datecreated" @bind-Value="Notifications.DateCreated" class="form-control" /> 
+                <ValidationMessage For="() => Notifications.DateCreated" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/notifications">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Notifications Notifications { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddNotifications()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Notifications.Add(Notifications);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/notifications");
+    }
+}

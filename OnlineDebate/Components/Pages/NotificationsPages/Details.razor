@@ -1,0 +1,52 @@
+﻿@page "/notifications/details"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Notifications</h2>
+    <hr />
+    @if (notifications is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">NotificationName</dt>
+            <dd class="col-sm-10">@notifications.NotificationName</dd>
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@notifications.UserId</dd>
+            <dt class="col-sm-2">TopicId</dt>
+            <dd class="col-sm-10">@notifications.TopicId</dd>
+            <dt class="col-sm-2">DateCreated</dt>
+            <dd class="col-sm-10">@notifications.DateCreated</dd>
+        </dl>
+        <div>
+            <a href="@($"/notifications/edit?id={notifications.Id}")">Edit</a> |
+            <a href="@($"/notifications")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Notifications? notifications;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        notifications = await context.Notifications.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (notifications is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

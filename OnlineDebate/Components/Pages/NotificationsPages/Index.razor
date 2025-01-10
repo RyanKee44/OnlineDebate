@@ -1,0 +1,39 @@
+﻿@page "/notifications"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OnlineDebate.Domain
+@using OnlineDebate.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="notifications/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Notifications">
+    <PropertyColumn Property="notifications => notifications.NotificationName" />
+    <PropertyColumn Property="notifications => notifications.UserId" />
+    <PropertyColumn Property="notifications => notifications.TopicId" />
+    <PropertyColumn Property="notifications => notifications.DateCreated" />
+
+    <TemplateColumn Context="notifications">
+        <a href="@($"notifications/edit?id={notifications.Id}")">Edit</a> |
+        <a href="@($"notifications/details?id={notifications.Id}")">Details</a> |
+        <a href="@($"notifications/delete?id={notifications.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private OnlineDebateContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

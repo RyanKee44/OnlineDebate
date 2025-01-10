@@ -1,0 +1,104 @@
+﻿@page "/notifications/edit"
+@using Microsoft.EntityFrameworkCore
+@using OnlineDebate.Domain
+@inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Notifications</h2>
+<hr />
+@if (Notifications is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Notifications" OnValidSubmit="UpdateNotifications" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Notifications.Id" value="@Notifications.Id" />
+                <div class="mb-3">
+                    <label for="notificationname" class="form-label">NotificationName:</label>
+                    <InputText id="notificationname" @bind-Value="Notifications.NotificationName" class="form-control" />
+                    <ValidationMessage For="() => Notifications.NotificationName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="userid" class="form-label">UserId:</label>
+                    <InputNumber id="userid" @bind-Value="Notifications.UserId" class="form-control" />
+                    <ValidationMessage For="() => Notifications.UserId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="topicid" class="form-label">TopicId:</label>
+                    <InputNumber id="topicid" @bind-Value="Notifications.TopicId" class="form-control" />
+                    <ValidationMessage For="() => Notifications.TopicId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="datecreated" class="form-label">DateCreated:</label>
+                    <InputDate id="datecreated" @bind-Value="Notifications.DateCreated" class="form-control" />
+                    <ValidationMessage For="() => Notifications.DateCreated" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/notifications">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Notifications? Notifications { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Notifications ??= await context.Notifications.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Notifications is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateNotifications()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Notifications!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!NotificationsExists(Notifications!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/notifications");
+    }
+
+    private bool NotificationsExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Notifications.Any(e => e.Id == id);
+    }
+}
