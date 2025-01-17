@@ -8,16 +8,12 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @attribute [Authorize(Roles = "Administrator, User")]
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Index</PageTitle> @*Index Page*@
 
-<h1>Index</h1>
-
-<p>
-    <a href="topics/create">Create New</a>
-</p>
+<h1 style="font-family:Jacquard">Debates</h1>
 
 <QuickGrid Class="table" Items="context.Topic">
-    <PropertyColumn Property="topic => topic.TopicName" />
+    <PropertyColumn Property="topic => topic.TopicName"/>
     <PropertyColumn Property="topic => topic.TopicCategory" />
     <PropertyColumn Property="topic => topic.TopicDescription" />
     <PropertyColumn Property="topic => topic.TopicRules" />
@@ -32,6 +28,10 @@
         </AuthorizeView>
     </TemplateColumn>
 </QuickGrid>
+
+<p>
+    <a href="topics/create">Create New</a>
+</p>
 
 
 
