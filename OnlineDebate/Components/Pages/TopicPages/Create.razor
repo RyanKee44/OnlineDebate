@@ -18,7 +18,13 @@
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
                 <label for="topicname" class="form-label">TopicName:</label> 
-                <InputText id="topicname" @bind-Value="Topic.TopicName" class="form-control" /> 
+                <InputSelect id="topicname" @bind-Value="Topic.TopicName" class="form-control">
+                    <option value="">Select a Topic</option>
+                    @foreach (var topic in preBuiltTopics)
+                    {
+                        <option value="@topic">@topic</option>
+                    }
+                </InputSelect>
                 <ValidationMessage For="() => Topic.TopicName" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -36,7 +42,7 @@
                 <InputText id="topicrules" @bind-Value="Topic.TopicRules" class="form-control" /> 
                 <ValidationMessage For="() => Topic.TopicRules" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="userid" class="form-label">UserId:</label> 
                 <InputNumber id="userid" @bind-Value="Topic.UserId" class="form-control" /> 
                 <ValidationMessage For="() => Topic.UserId" class="text-danger" /> 
@@ -56,6 +62,15 @@
 </div>
 
 @code {
+
+    private List<string> preBuiltTopics = new List<string>
+    {
+        "Math",
+        "Science",
+        "History",
+        "Literature"
+    };
+
     [SupplyParameterFromForm]
     private Topic Topic { get; set; } = new();
 
