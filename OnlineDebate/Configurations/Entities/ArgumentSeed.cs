@@ -15,7 +15,8 @@ namespace OnlineDebate.Configurations.Entities
                     DateCreated = DateTime.Now,
                     ArgumentContent = "I Love PAP",
                     ArgumentStance = true,
-                    ArgumentLike = 10000
+                    ArgumentLike = 10000,
+                    TopicId = 1 // Reference the Politics topic
                 },
                 new Argument
                 {
@@ -23,7 +24,8 @@ namespace OnlineDebate.Configurations.Entities
                     DateCreated = DateTime.Now,
                     ArgumentContent = "I Hate Dogs",
                     ArgumentStance = false,
-                    ArgumentLike = 10
+                    ArgumentLike = 10,
+                    TopicId = 2 // Reference the Politics topic
                 }
                 );
         }

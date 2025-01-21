@@ -7,5 +7,7 @@
         public int ArgumentLike { get; set; }
         public int UserId { get; set; }
         public int TopicId { get; set; }
+
+        public Topic Topic { get; set; } // Add this line
     }
 }

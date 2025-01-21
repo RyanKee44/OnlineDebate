@@ -17,11 +17,11 @@
 </p>
 
 <QuickGrid Class="table" Items="context.Argument">
-    <PropertyColumn Property="argument => argument.ArgumentContent" />
+    <PropertyColumn Property="argument => argument.ArgumentContent" Title = "End me" />
     <PropertyColumn Property="argument => argument.ArgumentStance" />
     <PropertyColumn Property="argument => argument.ArgumentLike" />
     <PropertyColumn Property="argument => argument.UserId" />
-    <PropertyColumn Property="argument => argument.TopicId" />
+    <PropertyColumn Property="argument => argument.Topic.TopicName" />x
     <PropertyColumn Property="argument => argument.DateCreated" />
 
     <TemplateColumn Context="argument">
@@ -39,6 +39,7 @@
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        context.Argument.Include(a => a.Topic).ToList();  // Eagerly load Topic
     }
     
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
