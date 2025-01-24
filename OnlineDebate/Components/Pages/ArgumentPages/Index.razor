@@ -17,12 +17,12 @@
 </p>
 
 <QuickGrid Class="table" Items="context.Argument">
-    <PropertyColumn Property="argument => argument.ArgumentContent" Title = "End me" />
-    <PropertyColumn Property="argument => argument.ArgumentStance" />
-    <PropertyColumn Property="argument => argument.ArgumentLike" />
-    <PropertyColumn Property="argument => argument.UserId" />
-    <PropertyColumn Property="argument => argument.Topic.TopicName" />x
-    <PropertyColumn Property="argument => argument.DateCreated" />
+    <PropertyColumn Property="argument => argument.ArgumentContent" Title = "Argument" />
+    <PropertyColumn Property="argument => argument.ArgumentStance" Title="Agree/Disagree" />
+    <PropertyColumn Property="argument => argument.ArgumentLike" Title="Likes" />
+    <PropertyColumn Property="argument => argument.OnlineDebateUser.FirstName" Title="User" />
+    <PropertyColumn Property="argument => argument.Topic.TopicName" Title="Topic" />
+    <PropertyColumn Property="argument => argument.DateCreated" Title="Date Added" />
 
     <TemplateColumn Context="argument">
         <a href="@($"arguments/edit?id={argument.Id}")">Edit</a> |
@@ -39,7 +39,12 @@
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
-        context.Argument.Include(a => a.Topic).ToList();  // Eagerly load Topic
+        var arguments = context.Argument
+            .Include(a => a.Topic)
+            .Include(a => a.OnlineDebateUser)
+            .ToList();
+
+
     }
     
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

@@ -17,19 +17,19 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="topicname" class="form-label">TopicName:</label> 
-                <InputSelect id="topicname" @bind-Value="Topic.TopicName" class="form-control">
-                    <option value="">Select a Topic</option>
+                <label for="topicname" class="form-label">TopicName:</label>
+                <InputText id="topicname" @bind-Value="Topic.TopicName" class="form-control" />
+                <ValidationMessage For="() => Topic.TopicName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="topiccategory" class="form-label">TopicCategory:</label> 
+                <InputSelect id="topiccategory" @bind-Value="Topic.TopicCategory" class="form-control">
+                    <option value="">-Select a Topic-</option>
                     @foreach (var topic in preBuiltTopics)
                     {
                         <option value="@topic">@topic</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => Topic.TopicName" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="topiccategory" class="form-label">TopicCategory:</label> 
-                <InputText id="topiccategory" @bind-Value="Topic.TopicCategory" class="form-control" /> 
                 <ValidationMessage For="() => Topic.TopicCategory" class="text-danger" /> 
             </div>        
             <div class="mb-3">

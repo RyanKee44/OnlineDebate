@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnlineDebate.Migrations
 {
     /// <inheritdoc />
-    public partial class wow : Migration
+    public partial class testyy : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,180 +15,159 @@ namespace OnlineDebate.Migrations
                 table: "Argument",
                 keyColumn: "Id",
                 keyValue: 1,
-                columns: new[] { "DateCreated", "TopicId" },
-                values: new object[] { new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5775), 1 });
+                column: "DateCreated",
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7168));
 
             migrationBuilder.UpdateData(
                 table: "Argument",
                 keyColumn: "Id",
                 keyValue: 2,
-                columns: new[] { "DateCreated", "TopicId" },
-                values: new object[] { new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5780), 2 });
+                column: "DateCreated",
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7178));
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: "3781efa7-66dc-47f0-860f-e506d04102e4",
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "bb112d28-ed8f-4fb6-b53b-a4608ddbc757", "AQAAAAIAAYagAAAAEG4t2sS6rVBsCjt3mOcaLLdbbNip9Jq3ZjXyoEPI1T32senlim6nM3mZh0gsliLv0g==", "b03bb00f-be20-458b-87aa-85cc2b6ef18f" });
+                values: new object[] { "9f8b6509-7c5f-4463-ad2e-4630fa0836bd", "AQAAAAIAAYagAAAAEBDGl25rf2Ci1DMjoxGywTn9lmARrsvQLzdkZ9br8MQ5RjigrfVI6WJjgJiXVkC0rA==", "0dd14515-b1fd-4f84-ae6a-41dcc9a084a8" });
 
             migrationBuilder.UpdateData(
                 table: "Comment",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5879));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7367));
 
             migrationBuilder.UpdateData(
                 table: "Comment",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5882));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7371));
 
             migrationBuilder.UpdateData(
                 table: "Notifications",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(6109));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7640));
 
             migrationBuilder.UpdateData(
                 table: "Notifications",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(6112));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7644));
 
             migrationBuilder.UpdateData(
                 table: "Report",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5990));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7509));
 
             migrationBuilder.UpdateData(
                 table: "Report",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5994));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(7513));
 
             migrationBuilder.UpdateData(
                 table: "Topic",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5544));
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(6785));
 
             migrationBuilder.UpdateData(
                 table: "Topic",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 22, 1, 5, 16, 951, DateTimeKind.Local).AddTicks(5569));
-
-            //migrationBuilder.CreateIndex(
-               // name: "IX_Argument_TopicId",
-               // table: "Argument",
-               // column: "TopicId");
-
-            //migrationBuilder.AddForeignKey(
-                //name: "FK_Argument_Topic_TopicId",
-                //table: "Argument",
-                //column: "TopicId",
-                //principalTable: "Topic",
-                //principalColumn: "Id",
-                //onDelete: ReferentialAction.Cascade);
+                value: new DateTime(2025, 1, 24, 10, 44, 33, 926, DateTimeKind.Local).AddTicks(6812));
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Argument_Topic_TopicId",
-                table: "Argument");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Argument_TopicId",
-                table: "Argument");
-
             migrationBuilder.UpdateData(
                 table: "Argument",
                 keyColumn: "Id",
                 keyValue: 1,
-                columns: new[] { "DateCreated", "TopicId" },
-                values: new object[] { new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4300), 0 });
+                column: "DateCreated",
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9129));
 
             migrationBuilder.UpdateData(
                 table: "Argument",
                 keyColumn: "Id",
                 keyValue: 2,
-                columns: new[] { "DateCreated", "TopicId" },
-                values: new object[] { new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4304), 0 });
+                column: "DateCreated",
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9137));
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: "3781efa7-66dc-47f0-860f-e506d04102e4",
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "48f2adfa-80db-4ec5-b684-9501d35f0985", "AQAAAAIAAYagAAAAEPq0cTmT2Eu6bqw5zL9ipD2rg9fxbcYIgF7sfRNG6QyKeFvOJ6Chil7nrGq6rErBwQ==", "d499ae65-ac0d-4200-b6d3-22992721b0e4" });
+                values: new object[] { "4ebfa581-0420-4350-b947-20e44e92b323", "AQAAAAIAAYagAAAAEDiWmHtZ9FZs0ApSpPU5jJCNMre24fNwrzRcfJ+u4TVTaVUmNCkCyrKGGuLGVqCZ2A==", "76c163a5-37a4-46de-9741-62247ba5f2d7" });
 
             migrationBuilder.UpdateData(
                 table: "Comment",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4387));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9258));
 
             migrationBuilder.UpdateData(
                 table: "Comment",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4392));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9261));
 
             migrationBuilder.UpdateData(
                 table: "Notifications",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4575));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9561));
 
             migrationBuilder.UpdateData(
                 table: "Notifications",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4578));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9565));
 
             migrationBuilder.UpdateData(
                 table: "Report",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4488));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9390));
 
             migrationBuilder.UpdateData(
                 table: "Report",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4491));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(9431));
 
             migrationBuilder.UpdateData(
                 table: "Topic",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4073));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(8791));
 
             migrationBuilder.UpdateData(
                 table: "Topic",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2025, 1, 10, 11, 33, 8, 31, DateTimeKind.Local).AddTicks(4092));
+                value: new DateTime(2025, 1, 24, 10, 38, 38, 335, DateTimeKind.Local).AddTicks(8813));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnlineDebate.Data;
 using OnlineDebate.Domain;
 
 namespace OnlineDebate.Configurations.Entities
@@ -16,7 +17,8 @@ namespace OnlineDebate.Configurations.Entities
                     ArgumentContent = "I Love PAP",
                     ArgumentStance = true,
                     ArgumentLike = 10000,
-                    TopicId = 1 // Reference the Politics topic
+                    TopicId = 1, 
+                    OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4"
                 },
                 new Argument
                 {
@@ -25,7 +27,8 @@ namespace OnlineDebate.Configurations.Entities
                     ArgumentContent = "I Hate Dogs",
                     ArgumentStance = false,
                     ArgumentLike = 10,
-                    TopicId = 2 // Reference the Politics topic
+                    TopicId = 2, 
+                    OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4"
                 }
                 );
         }

@@ -66,53 +66,47 @@ else
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
-    [SupplyParameterFromForm]
     private Topic? Topic { get; set; }
-
-    //Create userId string to store the user id, default value is "System".
-    private string userId = "System";
-    //Inject the AuthenticationStateProvider to get the user id.
-    @inject AuthenticationStateProvider authenticationStateProvider
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        // Get the userId claim
-        var userIdClaim = user.FindFirst("userId");
-        if (userIdClaim != null)
+        using var context = DbFactory.CreateDbContext();
+
+        // Retrieve the Topic based on the ID from the query parameter.
+        Topic = await context.Topic.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Topic is null)
         {
-            userId = userIdClaim.Value;
+            // Navigate to a "not found" page if the topic doesn't exist.
+            NavigationManager.NavigateTo("notfound");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateTopic()
     {
         using var context = DbFactory.CreateDbContext();
 
-        Topic.DateCreated = DateTime.Now;
-
-        context.Attach(Topic!).State = EntityState.Modified;
-
-        try
+        if (Topic is not null)
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!TopicExists(Topic!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
+            context.Attach(Topic).State = EntityState.Modified;
 
-        NavigationManager.NavigateTo("/topics");
+            try
+            {
+                await context.SaveChangesAsync();
+                NavigationManager.NavigateTo("/topics");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TopicExists(Topic.Id))
+                {
+                    NavigationManager.NavigateTo("notfound");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
     }
 
     private bool TopicExists(int id)

@@ -1,4 +1,6 @@
-﻿namespace OnlineDebate.Domain
+﻿using OnlineDebate.Data;
+
+namespace OnlineDebate.Domain
 {
     public class Argument : BaseDomainModel
     {
@@ -8,6 +10,11 @@
         public int UserId { get; set; }
         public int TopicId { get; set; }
 
-        public Topic Topic { get; set; } // Add this line
+        public string? OnlineDebateUserId { get; set; }
+
+
+        public Topic Topic { get; set; }
+
+        public OnlineDebateUser OnlineDebateUser { get; set; }
     }
 }

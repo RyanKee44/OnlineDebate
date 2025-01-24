@@ -5,6 +5,9 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
 <PageTitle>Create</PageTitle>
 
 <h1>Create</h1>
@@ -22,8 +25,11 @@
                 <ValidationMessage For="() => Argument.ArgumentContent" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="argumentstance" class="form-label">ArgumentStance:</label> 
-                <InputCheckbox id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-check-input" /> 
+                <label for="argumentstance" class="form-label">ArgumentStance:</label>
+                <InputSelect id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-control">
+                    <option value="true">Agree</option>
+                    <option value="false">Disagree</option>
+                </InputSelect>
                 <ValidationMessage For="() => Argument.ArgumentStance" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -31,10 +37,10 @@
                 <InputNumber id="argumentlike" @bind-Value="Argument.ArgumentLike" class="form-control" /> 
                 <ValidationMessage For="() => Argument.ArgumentLike" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
-                <label for="userid" class="form-label">UserId:</label> 
-                <InputNumber id="userid" @bind-Value="Argument.UserId" class="form-control" /> 
-                <ValidationMessage For="() => Argument.UserId" class="text-danger" /> 
+            <div class="mb-3" hidden>
+                <label for="onlinedebateuserid" class="form-label">onlinedebateuserid:</label>
+                <InputText id="onlinedebateuserid" @bind-Value="Argument.OnlineDebateUserId" class="form-control" />
+                <ValidationMessage For="() => Argument.OnlineDebateUserId" class="text-danger" />
             </div>        
             <div class="mb-3">
                 <label for="topicid" class="form-label">TopicId:</label>
@@ -79,6 +85,15 @@
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddArgument()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Argument.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
         using var context = DbFactory.CreateDbContext();
         Argument.DateCreated = DateTime.Now;
         context.Argument.Add(Argument);

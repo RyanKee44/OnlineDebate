@@ -12,13 +12,17 @@
 
 <h1 style="font-family:Jacquard">Debates</h1>
 
+<p>
+    <a href="topics/create">Create New</a>
+</p>
+
 <QuickGrid Class="table" Items="context.Topic">
-    <PropertyColumn Property="topic => topic.TopicName"/>
-    <PropertyColumn Property="topic => topic.TopicCategory" />
-    <PropertyColumn Property="topic => topic.TopicDescription" />
-    <PropertyColumn Property="topic => topic.TopicRules" />
-    <PropertyColumn Property="topic => topic.UserId" />
-    <PropertyColumn Property="topic => topic.DateCreated" />
+    <PropertyColumn Property="topic => topic.TopicName" Title="Topicy" />
+    <PropertyColumn Property="topic => topic.TopicCategory" Title="Category" />
+    <PropertyColumn Property="topic => topic.TopicDescription" Title="Description" />
+    <PropertyColumn Property="topic => topic.TopicRules" Title="Rules" />
+    <PropertyColumn Property="topic => topic.UserId" Title="User" />
+    <PropertyColumn Property="topic => topic.DateCreated" Title="Date Created" />
 
     <TemplateColumn Context="topic">
         <a href="@($"topics/edit?id={topic.Id}")">Edit</a> |
@@ -29,9 +33,6 @@
     </TemplateColumn>
 </QuickGrid>
 
-<p>
-    <a href="topics/create">Create New</a>
-</p>
 
 
 
