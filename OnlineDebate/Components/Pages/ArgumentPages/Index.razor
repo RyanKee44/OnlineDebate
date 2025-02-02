@@ -10,17 +10,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<h1 style="font-family:Jacquard">Arguments</h1>
 
-<p>
-    <a href="arguments/create">Create New</a>
-</p>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
+
+
 
 <QuickGrid Class="table" Items="context.Argument">
     <PropertyColumn Property="argument => argument.ArgumentContent" Title = "Argument" />
     <PropertyColumn Property="argument => argument.ArgumentStance" Title="Agree/Disagree" />
     <PropertyColumn Property="argument => argument.ArgumentLike" Title="Likes" />
-        @*HHH*@
     <PropertyColumn Property="argument => argument.OnlineDebateUser.FirstName" Title="User" />
     <PropertyColumn Property="argument => argument.Topic.TopicName" Title="Topic" />
     <PropertyColumn Property="argument => argument.DateCreated" Title="Date Added" />
@@ -33,6 +36,10 @@
         </AuthorizeView>
     </TemplateColumn>
 </QuickGrid>
+
+<NavLink class="nav-link" href="arguments/create">
+    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+</NavLink>
 
 @code {
     private OnlineDebateContext context = default!;

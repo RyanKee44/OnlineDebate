@@ -17,7 +17,9 @@ namespace OnlineDebate.Configurations.Entities
                     TopicCategory = "Politics",
                     TopicDescription = "I think the PAP is good overall but interested" +
                     "in other opinions ^w^",
-                    TopicRules = "No Hate and 10 Mins for each Side!"
+                    TopicRules = "No Hate and 10 Mins for each Side!",
+                    OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4"
+
                 },
                 new Topic
                 {
@@ -26,7 +28,8 @@ namespace OnlineDebate.Configurations.Entities
                     TopicName = "Cats or Dogs",
                     TopicCategory = "Fun",
                     TopicDescription = "Are Cats or Dogs Better?",
-                    TopicRules = "No Hate and 10 Mins for each Side!"
+                    TopicRules = "No Hate and 10 Mins for each Side!",
+                    OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4"
                 }
                 );
         }

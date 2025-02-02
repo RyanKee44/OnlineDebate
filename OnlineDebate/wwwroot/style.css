@@ -9,14 +9,19 @@
     font-size: 2rem
 }
 
+
 .Login {
     text-align:center;
 }
 
-.row {
+.rowLogin {
     display: flex;
     flex-direction: column;
     align-items: center; 
     width: 100%; 
     max-width: 2000px; 
 }
+
+
+
+

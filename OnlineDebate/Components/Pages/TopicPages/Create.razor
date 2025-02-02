@@ -5,9 +5,18 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
+
+<h1 style="font-family:Jacquard">Create</h1>
 
 <h2>Topic</h2>
 <hr />
@@ -98,6 +107,15 @@
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddTopic()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Topic.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
         using var context = DbFactory.CreateDbContext();
 
         //Set the userId to the CreatedBy and UpdatedBy fields.

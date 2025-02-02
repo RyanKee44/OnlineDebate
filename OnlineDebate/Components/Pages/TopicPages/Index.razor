@@ -10,18 +10,22 @@
 
 <PageTitle>Index</PageTitle> @*Index Page*@
 
+<style style="font-family:Jacquard">
+    body {
+        background-color: lightyellow;
+    }
+</style>
+
 <h1 style="font-family:Jacquard">Debates</h1>
 
-<p>
-    <a href="topics/create">Create New</a>
-</p>
+
 
 <QuickGrid Class="table" Items="context.Topic">
-    <PropertyColumn Property="topic => topic.TopicName" Title="Topicy" />
+    <PropertyColumn Property="topic => topic.TopicName" Title="Topic" />
     <PropertyColumn Property="topic => topic.TopicCategory" Title="Category" />
     <PropertyColumn Property="topic => topic.TopicDescription" Title="Description" />
     <PropertyColumn Property="topic => topic.TopicRules" Title="Rules" />
-    <PropertyColumn Property="topic => topic.UserId" Title="User" />
+    <PropertyColumn Property="topic => topic.OnlineDebateUser.FirstName" Title="User" />
     <PropertyColumn Property="topic => topic.DateCreated" Title="Date Created" />
 
     <TemplateColumn Context="topic">
@@ -33,6 +37,10 @@
     </TemplateColumn>
 </QuickGrid>
 
+<NavLink class="nav-link" href="Topics/Create">
+    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+</NavLink>
+
 
 
 
@@ -42,6 +50,9 @@
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        var arguments = context.Topic
+        .Include(a => a.OnlineDebateUser)
+        .ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
