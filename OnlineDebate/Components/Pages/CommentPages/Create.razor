@@ -5,9 +5,18 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
+
+<h1 style="font-family:Jacquard">Create</h1>
 
 <h2>Comment</h2>
 <hr />
@@ -26,12 +35,12 @@
                 <InputCheckbox id="commentstance" @bind-Value="Comment.CommentStance" class="form-check-input" /> 
                 <ValidationMessage For="() => Comment.CommentStance" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="commentlike" class="form-label">CommentLike:</label> 
                 <InputNumber id="commentlike" @bind-Value="Comment.CommentLike" class="form-control" /> 
                 <ValidationMessage For="() => Comment.CommentLike" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="userid" class="form-label">UserId:</label> 
                 <InputNumber id="userid" @bind-Value="Comment.UserId" class="form-control" /> 
                 <ValidationMessage For="() => Comment.UserId" class="text-danger" /> 
@@ -79,6 +88,15 @@
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddComment()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Comment.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
         using var context = DbFactory.CreateDbContext();
         Comment.DateCreated = DateTime.Now;
         context.Comment.Add(Comment);

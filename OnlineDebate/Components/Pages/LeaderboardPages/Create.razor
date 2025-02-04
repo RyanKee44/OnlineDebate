@@ -5,9 +5,18 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
+
+<h1 style="font-family:Jacquard">Create</h1>
 
 <h2>Leaderboard</h2>
 <hr />
@@ -16,22 +25,22 @@
         <EditForm method="post" Model="Leaderboard" OnValidSubmit="AddLeaderboard" FormName="create" Enhance>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="leaderboardrank" class="form-label">LeaderboardRank:</label> 
                 <InputNumber id="leaderboardrank" @bind-Value="Leaderboard.LeaderboardRank" class="form-control" /> 
                 <ValidationMessage For="() => Leaderboard.LeaderboardRank" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="leaderboardpoints" class="form-label">LeaderboardPoints:</label> 
                 <InputNumber id="leaderboardpoints" @bind-Value="Leaderboard.LeaderboardPoints" class="form-control" /> 
                 <ValidationMessage For="() => Leaderboard.LeaderboardPoints" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="leaderboardrefresh" class="form-label">LeaderboardRefresh:</label> 
                 <InputNumber id="leaderboardrefresh" @bind-Value="Leaderboard.LeaderboardRefresh" class="form-control" /> 
                 <ValidationMessage For="() => Leaderboard.LeaderboardRefresh" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
+            <div class="mb-3" hidden>
                 <label for="userid" class="form-label">UserId:</label> 
                 <InputNumber id="userid" @bind-Value="Leaderboard.UserId" class="form-control" /> 
                 <ValidationMessage For="() => Leaderboard.UserId" class="text-danger" /> 
@@ -80,6 +89,15 @@
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddLeaderboard()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Leaderboard.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
         using var context = DbFactory.CreateDbContext();
         Leaderboard.DateCreated = DateTime.Now;
         context.Leaderboard.Add(Leaderboard);

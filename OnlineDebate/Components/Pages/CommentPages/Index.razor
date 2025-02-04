@@ -8,18 +8,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
 
-<p>
-    <a href="comments/create">Create New</a>
-</p>
+<h1 style="font-family:Jacquard">Comments</h1>
 
 <QuickGrid Class="table" Items="context.Comment">
     <PropertyColumn Property="comment => comment.CommentContent" />
     <PropertyColumn Property="comment => comment.CommentStance" />
     <PropertyColumn Property="comment => comment.CommentLike" />
-    <PropertyColumn Property="comment => comment.UserId" />
-    <PropertyColumn Property="comment => comment.ArgumentId" />
+    <PropertyColumn Property="comment => comment.OnlineDebateUser.FirstName" />
+    <PropertyColumn Property="comment => comment.Argument.ArgumentContent" />
     <PropertyColumn Property="comment => comment.DateCreated" />
 
     <TemplateColumn Context="comment">
@@ -29,12 +31,20 @@
     </TemplateColumn>
 </QuickGrid>
 
+<NavLink class="nav-link" href="comments/create">
+    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+</NavLink>
+
 @code {
     private OnlineDebateContext context = default!;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        var arguments = context.Comment
+            .Include(a => a.Argument)
+            .Include(a => a.OnlineDebateUser)
+            .ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

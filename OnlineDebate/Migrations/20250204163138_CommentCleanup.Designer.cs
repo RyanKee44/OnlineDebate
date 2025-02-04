@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineDebate.Data;
 
@@ -11,9 +12,11 @@ using OnlineDebate.Data;
 namespace OnlineDebate.Migrations
 {
     [DbContext(typeof(OnlineDebateContext))]
-    partial class OnlineDebateContextModelSnapshot : ModelSnapshot
+    [Migration("20250204163138_CommentCleanup")]
+    partial class CommentCleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,7 +254,7 @@ namespace OnlineDebate.Migrations
                         {
                             Id = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a539ecf6-33fa-458e-887b-905eef2b5b05",
+                            ConcurrencyStamp = "41688262-aaf2-45fe-80e1-c6aab5102948",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -259,9 +262,9 @@ namespace OnlineDebate.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJJK8PISa5crJGsSIBX7AyEn6cM/NpSkV1kd+vSpIXZj/X92fUytyIJbHuC0XfxbxQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP2NwzAlxZqRv7MYImS6cyKB0ZnCpFvwTKS5CDeIQ1/FsLAB1rl6XOZ2xJYyAjB/rQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b9f7c81e-f206-4ec9-a3e4-ccde5b450764",
+                            SecurityStamp = "e4a0cf40-318f-4662-8771-25c390f1175e",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });
@@ -311,7 +314,7 @@ namespace OnlineDebate.Migrations
                             ArgumentContent = "I Love PAP",
                             ArgumentLike = 10000,
                             ArgumentStance = true,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3795),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 968, DateTimeKind.Local).AddTicks(9958),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 1,
                             UserId = 0
@@ -322,7 +325,7 @@ namespace OnlineDebate.Migrations
                             ArgumentContent = "I Hate Dogs",
                             ArgumentLike = 10,
                             ArgumentStance = false,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3806),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 968, DateTimeKind.Local).AddTicks(9970),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 2,
                             UserId = 0
@@ -374,7 +377,7 @@ namespace OnlineDebate.Migrations
                             CommentContent = "I agree!",
                             CommentLike = 1000,
                             CommentStance = true,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4062),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(522),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             UserId = 0
                         },
@@ -385,7 +388,7 @@ namespace OnlineDebate.Migrations
                             CommentContent = "I Disagree!",
                             CommentLike = 100,
                             CommentStance = false,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4071),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(533),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             UserId = 0
                         });
@@ -411,9 +414,6 @@ namespace OnlineDebate.Migrations
                     b.Property<int>("LeaderboardRefresh")
                         .HasColumnType("int");
 
-                    b.Property<string>("OnlineDebateUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
 
@@ -421,10 +421,6 @@ namespace OnlineDebate.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OnlineDebateUserId");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("Leaderboard");
                 });
@@ -443,9 +439,6 @@ namespace OnlineDebate.Migrations
                     b.Property<string>("NotificationName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OnlineDebateUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
 
@@ -454,29 +447,23 @@ namespace OnlineDebate.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OnlineDebateUserId");
-
-                    b.HasIndex("TopicId");
-
                     b.ToTable("Notifications");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4637),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(1121),
                             NotificationName = "Hey Brother, Here's a topic you might be interested in",
-                            OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
-                            TopicId = 1,
+                            TopicId = 0,
                             UserId = 0
                         },
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4643),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(1125),
                             NotificationName = "Oh hi",
-                            OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
-                            TopicId = 1,
+                            TopicId = 0,
                             UserId = 0
                         });
                 });
@@ -498,9 +485,6 @@ namespace OnlineDebate.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OnlineDebateUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ReportReason")
                         .HasColumnType("nvarchar(max)");
 
@@ -512,22 +496,15 @@ namespace OnlineDebate.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArgumentId");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("OnlineDebateUserId");
-
                     b.ToTable("Report");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            ArgumentId = 1,
-                            CommentId = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4358),
-                            OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
+                            ArgumentId = 0,
+                            CommentId = 0,
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(883),
                             ReportReason = "Hate Speech",
                             ReportType = "Hate",
                             UserId = 0
@@ -535,10 +512,9 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 2,
-                            ArgumentId = 2,
-                            CommentId = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4369),
-                            OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
+                            ArgumentId = 0,
+                            CommentId = 0,
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 969, DateTimeKind.Local).AddTicks(891),
                             ReportReason = "Irrelavent",
                             ReportType = "Not Relavent",
                             UserId = 0
@@ -584,7 +560,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(2996),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 968, DateTimeKind.Local).AddTicks(9207),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicCategory = "Politics",
                             TopicDescription = "I think the PAP is good overall but interestedin other opinions ^w^",
@@ -595,7 +571,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3040),
+                            DateCreated = new DateTime(2025, 2, 5, 0, 31, 34, 968, DateTimeKind.Local).AddTicks(9242),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicCategory = "Fun",
                             TopicDescription = "Are Cats or Dogs Better?",
@@ -717,65 +693,6 @@ namespace OnlineDebate.Migrations
                         .HasForeignKey("OnlineDebateUserId");
 
                     b.Navigation("Argument");
-
-                    b.Navigation("OnlineDebateUser");
-                });
-
-            modelBuilder.Entity("OnlineDebate.Domain.Leaderboard", b =>
-                {
-                    b.HasOne("OnlineDebate.Data.OnlineDebateUser", "OnlineDebateUser")
-                        .WithMany()
-                        .HasForeignKey("OnlineDebateUserId");
-
-                    b.HasOne("OnlineDebate.Domain.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OnlineDebateUser");
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("OnlineDebate.Domain.Notifications", b =>
-                {
-                    b.HasOne("OnlineDebate.Data.OnlineDebateUser", "OnlineDebateUser")
-                        .WithMany()
-                        .HasForeignKey("OnlineDebateUserId");
-
-                    b.HasOne("OnlineDebate.Domain.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OnlineDebateUser");
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("OnlineDebate.Domain.Report", b =>
-                {
-                    b.HasOne("OnlineDebate.Domain.Argument", "Argument")
-                        .WithMany()
-                        .HasForeignKey("ArgumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineDebate.Domain.Comment", "Comment")
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineDebate.Data.OnlineDebateUser", "OnlineDebateUser")
-                        .WithMany()
-                        .HasForeignKey("OnlineDebateUserId");
-
-                    b.Navigation("Argument");
-
-                    b.Navigation("Comment");
 
                     b.Navigation("OnlineDebateUser");
                 });

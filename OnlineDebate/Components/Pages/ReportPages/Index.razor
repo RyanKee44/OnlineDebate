@@ -8,18 +8,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<style>
+    body {
+    background-color: lightyellow;
+    }
+</style>
 
-<p>
-    <a href="reports/create">Create New</a>
-</p>
+<h1 style="font-family:Jacquard">Reports</h1>
 
 <QuickGrid Class="table" Items="context.Report">
     <PropertyColumn Property="report => report.ReportReason" />
     <PropertyColumn Property="report => report.ReportType" />
-    <PropertyColumn Property="report => report.UserId" />
-    <PropertyColumn Property="report => report.ArgumentId" />
-    <PropertyColumn Property="report => report.CommentId" />
+    <PropertyColumn Property="report => report.OnlineDebateUser.FirstName" />
+    <PropertyColumn Property="report => report.Argument.ArgumentContent" />
+    <PropertyColumn Property="report => report.Comment.CommentContent" />
     <PropertyColumn Property="report => report.DateCreated" />
 
     <TemplateColumn Context="report">
@@ -29,12 +31,21 @@
     </TemplateColumn>
 </QuickGrid>
 
+<NavLink class="nav-link" href="reports/create">
+    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+</NavLink>
+
 @code {
     private OnlineDebateContext context = default!;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        var arguments = context.Report
+          .Include(a => a.Comment)
+          .Include(a => a.Argument)
+          .Include(a => a.OnlineDebateUser)
+          .ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

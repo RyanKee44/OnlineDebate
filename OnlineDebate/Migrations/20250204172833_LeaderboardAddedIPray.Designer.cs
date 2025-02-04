@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineDebate.Data;
 
@@ -11,9 +12,11 @@ using OnlineDebate.Data;
 namespace OnlineDebate.Migrations
 {
     [DbContext(typeof(OnlineDebateContext))]
-    partial class OnlineDebateContextModelSnapshot : ModelSnapshot
+    [Migration("20250204172833_LeaderboardAddedIPray")]
+    partial class LeaderboardAddedIPray
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,7 +254,7 @@ namespace OnlineDebate.Migrations
                         {
                             Id = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a539ecf6-33fa-458e-887b-905eef2b5b05",
+                            ConcurrencyStamp = "3d455518-f9c1-4860-b379-45ef8377ccd5",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -259,9 +262,9 @@ namespace OnlineDebate.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJJK8PISa5crJGsSIBX7AyEn6cM/NpSkV1kd+vSpIXZj/X92fUytyIJbHuC0XfxbxQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELw8lsGAbCetJ9/SWECxtinFnuaeam2ERNu+OEzYsxiugQCD+uRN4IV2PnQVEtcABA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b9f7c81e-f206-4ec9-a3e4-ccde5b450764",
+                            SecurityStamp = "9ba69550-6abd-48ea-8cd3-805c08189e2d",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });
@@ -311,7 +314,7 @@ namespace OnlineDebate.Migrations
                             ArgumentContent = "I Love PAP",
                             ArgumentLike = 10000,
                             ArgumentStance = true,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3795),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(6604),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 1,
                             UserId = 0
@@ -322,7 +325,7 @@ namespace OnlineDebate.Migrations
                             ArgumentContent = "I Hate Dogs",
                             ArgumentLike = 10,
                             ArgumentStance = false,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3806),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(6620),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 2,
                             UserId = 0
@@ -374,7 +377,7 @@ namespace OnlineDebate.Migrations
                             CommentContent = "I agree!",
                             CommentLike = 1000,
                             CommentStance = true,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4062),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(6913),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             UserId = 0
                         },
@@ -385,7 +388,7 @@ namespace OnlineDebate.Migrations
                             CommentContent = "I Disagree!",
                             CommentLike = 100,
                             CommentStance = false,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4071),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(6922),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             UserId = 0
                         });
@@ -464,7 +467,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4637),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(8812),
                             NotificationName = "Hey Brother, Here's a topic you might be interested in",
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 1,
@@ -473,7 +476,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4643),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(8824),
                             NotificationName = "Oh hi",
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicId = 1,
@@ -526,7 +529,7 @@ namespace OnlineDebate.Migrations
                             Id = 1,
                             ArgumentId = 1,
                             CommentId = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4358),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(7433),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             ReportReason = "Hate Speech",
                             ReportType = "Hate",
@@ -537,7 +540,7 @@ namespace OnlineDebate.Migrations
                             Id = 2,
                             ArgumentId = 2,
                             CommentId = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(4369),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(7454),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             ReportReason = "Irrelavent",
                             ReportType = "Not Relavent",
@@ -584,7 +587,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(2996),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(5707),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicCategory = "Politics",
                             TopicDescription = "I think the PAP is good overall but interestedin other opinions ^w^",
@@ -595,7 +598,7 @@ namespace OnlineDebate.Migrations
                         new
                         {
                             Id = 2,
-                            DateCreated = new DateTime(2025, 2, 5, 1, 32, 9, 495, DateTimeKind.Local).AddTicks(3040),
+                            DateCreated = new DateTime(2025, 2, 5, 1, 28, 31, 194, DateTimeKind.Local).AddTicks(5746),
                             OnlineDebateUserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             TopicCategory = "Fun",
                             TopicDescription = "Are Cats or Dogs Better?",

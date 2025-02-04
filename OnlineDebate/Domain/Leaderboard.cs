@@ -1,4 +1,6 @@
-﻿namespace OnlineDebate.Domain
+﻿using OnlineDebate.Data;
+
+namespace OnlineDebate.Domain
 {
     public class Leaderboard : BaseDomainModel
     {
@@ -7,5 +9,12 @@
         public int LeaderboardRefresh { get; set; }
         public int UserId { get; set; }
         public int TopicId { get; set; }
+
+        public string? OnlineDebateUserId { get; set; }
+
+
+        public Topic Topic { get; set; }
+
+        public OnlineDebateUser OnlineDebateUser { get; set; }
     }
 }

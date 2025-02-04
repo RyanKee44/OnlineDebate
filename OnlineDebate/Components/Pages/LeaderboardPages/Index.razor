@@ -8,18 +8,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
 
-<p>
-    <a href="leaderboards/create">Create New</a>
-</p>
+<h1 style="font-family:Jacquard">Leaderboard</h1>
 
 <QuickGrid Class="table" Items="context.Leaderboard">
     <PropertyColumn Property="leaderboard => leaderboard.LeaderboardRank" />
     <PropertyColumn Property="leaderboard => leaderboard.LeaderboardPoints" />
     <PropertyColumn Property="leaderboard => leaderboard.LeaderboardRefresh" />
-    <PropertyColumn Property="leaderboard => leaderboard.UserId" />
-    <PropertyColumn Property="leaderboard => leaderboard.TopicId" />
+    <PropertyColumn Property="leaderboard => leaderboard.OnlineDebateUser.FirstName" />
+    <PropertyColumn Property="leaderboard => leaderboard.Topic.TopicName" />
     <PropertyColumn Property="leaderboard => leaderboard.DateCreated" />
 
     <TemplateColumn Context="leaderboard">
@@ -35,6 +37,10 @@
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        var arguments = context.Leaderboard
+          .Include(a => a.Topic)
+          .Include(a => a.OnlineDebateUser)
+          .ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

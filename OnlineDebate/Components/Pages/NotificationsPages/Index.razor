@@ -8,16 +8,18 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: lightyellow;
+    }
+</style>
 
-<p>
-    <a href="notifications/create">Create New</a>
-</p>
+<h1 style="font-family:Jacquard">Notifications</h1>
 
 <QuickGrid Class="table" Items="context.Notifications">
     <PropertyColumn Property="notifications => notifications.NotificationName" />
-    <PropertyColumn Property="notifications => notifications.UserId" />
-    <PropertyColumn Property="notifications => notifications.TopicId" />
+    <PropertyColumn Property="notifications => notifications.OnlineDebateUser.FirstName" />
+    <PropertyColumn Property="notifications => notifications.Topic.TopicName" />
     <PropertyColumn Property="notifications => notifications.DateCreated" />
 
     <TemplateColumn Context="notifications">
@@ -27,12 +29,20 @@
     </TemplateColumn>
 </QuickGrid>
 
+<NavLink class="nav-link" href="notifications/create">
+    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+</NavLink>
+
 @code {
     private OnlineDebateContext context = default!;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        var arguments = context.Notifications
+             .Include(a => a.Topic)
+             .Include(a => a.OnlineDebateUser)
+             .ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

@@ -1,5 +1,8 @@
 ﻿@page "/"
 
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 <PageTitle>Home</PageTitle>
 
 <style>
@@ -12,7 +15,9 @@
 
 <h1 class="DigitalDebatorsLogo">Digital <br /> Debators</h1>
 
-<p style="text-align:center; font-size:2rem">A Place For All Your Arguements.</p>
+<h2 style="text-align:center; font-size:2rem">A Place For All Your Arguements.</h2>
+
+<h3 style="text-align:center">Welcome @userName!</h3>
 
 <NavLink class="nav-link" href="Topics" style="text-align:center">
 	<button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Debate Here</button>
@@ -31,3 +36,21 @@
 
 <img src="Debate.jpg" alt="Help" height="200" width="100" style="transform: rotate(270deg); position: absolute; left: 333px; top: 300px;" />
 *@
+
+@code {
+	private string userName = "Guest";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity is not null && user.Identity.IsAuthenticated)
+		{
+				userName = user.Identity.Name?.Split('@')[0] ?? "User";
+		}
+
+			
+	}
+}
+
