@@ -3,8 +3,11 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using OnlineDebate.Domain
 @using OnlineDebate.Data
+@using Microsoft.AspNetCore.Authorization
 @implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+
+@attribute [Authorize(Roles = "Administrator, User")]
 
 <PageTitle>Index</PageTitle>
 
@@ -29,9 +32,11 @@
     </TemplateColumn>
 </QuickGrid>
 
-<NavLink class="nav-link" href="notifications/create">
-    <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
-</NavLink>
+<AuthorizeView Roles="Administrator"> 
+    <NavLink class="nav-link" href="notifications/create">
+        <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
+    </NavLink>
+</AuthorizeView>
 
 @code {
     private OnlineDebateContext context = default!;

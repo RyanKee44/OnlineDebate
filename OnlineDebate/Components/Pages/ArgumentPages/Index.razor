@@ -4,11 +4,12 @@
 @using OnlineDebate.Domain
 @using OnlineDebate.Data
 @using Microsoft.AspNetCore.Authorization
-@implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Administrator, User")]
+@rendermode InteractiveServer
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Arguments</PageTitle>
 
 <h1 style="font-family:Jacquard">Arguments</h1>
 
@@ -18,10 +19,8 @@
     }
 </style>
 
-
-
-<QuickGrid Class="table" Items="context.Argument">
-    <PropertyColumn Property="argument => argument.ArgumentContent" Title = "Argument" />
+<QuickGrid Class="table" Items="arguments.AsQueryable()">
+    <PropertyColumn Property="argument => argument.ArgumentContent" Title="Argument" />
     <PropertyColumn Property="argument => argument.ArgumentStance" Title="Agree/Disagree" />
     <PropertyColumn Property="argument => argument.ArgumentLike" Title="Likes" />
     <PropertyColumn Property="argument => argument.OnlineDebateUser.FirstName" Title="User" />
@@ -34,6 +33,10 @@
         <AuthorizeView Roles="Administrator">
             <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
         </AuthorizeView>
+
+        <a href="@($"comments?argumentId={argument.Id}")">View Comments</a>
+        <button @onclick="() => ChangeLike(argument, 1)" style="background-color: green; color: white;">Like</button>
+        <button @onclick="() => ChangeLike(argument, -1)" style="background-color: red; color: white;">Dislike</button>
     </TemplateColumn>
 </QuickGrid>
 
@@ -43,17 +46,40 @@
 
 @code {
     private OnlineDebateContext context = default!;
+    private List<Argument> arguments = new List<Argument>();
+
+    [SupplyParameterFromQuery]
+    public int? TopicId { get; set; }  // TopicId from query parameter
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
-        var arguments = context.Argument
+
+        var query = context.Argument
             .Include(a => a.Topic)
             .Include(a => a.OnlineDebateUser)
-            .ToList();
+            .AsQueryable();
 
+        if (TopicId.HasValue)  // Filter arguments based on TopicId
+        {
+            query = query.Where(a => a.Topic.Id == TopicId.Value);
+        }
 
+        arguments = query.ToList();
     }
-    
+
+    private async Task ChangeLike(Argument argument, int change)
+    {
+        argument.ArgumentLike += change;
+
+        context.Argument.Update(argument);
+        await context.SaveChangesAsync();
+
+        var updatedArgument = arguments.First(a => a.Id == argument.Id);
+        updatedArgument.ArgumentLike = argument.ArgumentLike;
+
+        StateHasChanged();
+    }
+
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

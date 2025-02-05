@@ -5,6 +5,7 @@
 @using OnlineDebate.Data
 @implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
+@rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle>
 
@@ -16,18 +17,21 @@
 
 <h1 style="font-family:Jacquard">Comments</h1>
 
-<QuickGrid Class="table" Items="context.Comment">
-    <PropertyColumn Property="comment => comment.CommentContent" />
-    <PropertyColumn Property="comment => comment.CommentStance" />
-    <PropertyColumn Property="comment => comment.CommentLike" />
-    <PropertyColumn Property="comment => comment.OnlineDebateUser.FirstName" />
-    <PropertyColumn Property="comment => comment.Argument.ArgumentContent" />
-    <PropertyColumn Property="comment => comment.DateCreated" />
+<QuickGrid Class="table" Items="comments.AsQueryable()">
+    <PropertyColumn Property="comment => comment.CommentContent" Title = "Comment" />
+    <PropertyColumn Property="comment => comment.CommentStance" Title="Agree/Disagree" />
+    <PropertyColumn Property="comment => comment.CommentLike" Title="Likes" />
+    <PropertyColumn Property="comment => comment.OnlineDebateUser.FirstName" Title="User" />
+    <PropertyColumn Property="comment => comment.Argument.ArgumentContent" Title="Arguement" />
+    <PropertyColumn Property="comment => comment.DateCreated" Title="Date" />
 
     <TemplateColumn Context="comment">
         <a href="@($"comments/edit?id={comment.Id}")">Edit</a> |
         <a href="@($"comments/details?id={comment.Id}")">Details</a> |
         <a href="@($"comments/delete?id={comment.Id}")">Delete</a>
+
+        <button @onclick="() => ChangeLike(comment, 1)" style="background-color: green; color: white;">Like</button>
+        <button @onclick="() => ChangeLike(comment, -1)" style="background-color: red; color: white;">Dislike</button>
     </TemplateColumn>
 </QuickGrid>
 
@@ -37,14 +41,39 @@
 
 @code {
     private OnlineDebateContext context = default!;
+    private List<Comment> comments = new List<Comment>();
+
+    [SupplyParameterFromQuery]
+    public int? argumentId { get; set; }
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
-        var arguments = context.Comment
-            .Include(a => a.Argument)
-            .Include(a => a.OnlineDebateUser)
-            .ToList();
+
+        var query = context.Comment
+            .Include(c => c.Argument)
+            .Include(c => c.OnlineDebateUser)
+            .AsQueryable();
+
+        if (argumentId.HasValue)
+        {
+            query = query.Where(c => c.ArgumentId == argumentId.Value);
+        }
+
+        comments = query.ToList();
+    }
+
+    private async Task ChangeLike(Comment comment, int change)
+    {
+        comment.CommentLike += change;
+
+        context.Comment.Update(comment);
+        await context.SaveChangesAsync();
+
+        var updatedComment = comments.First(c => c.Id == comment.Id);
+        updatedComment.CommentLike = comment.CommentLike;
+
+        StateHasChanged();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

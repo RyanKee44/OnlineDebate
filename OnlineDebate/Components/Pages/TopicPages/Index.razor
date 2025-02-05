@@ -34,6 +34,7 @@
         <AuthorizeView Roles="Administrator">
             <a href="@($"topics/delete?id={topic.Id}")">Delete</a>
         </AuthorizeView>
+        <a href="@($"arguments?topicId={topic.Id}")">View Arguments</a>
     </TemplateColumn>
 </QuickGrid>
 
