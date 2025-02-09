@@ -12,60 +12,62 @@
 
 <style>
     body {
-        background-color: lightyellow;
+    background-color: lightyellow;
     }
 
     .blue-outline {
-        border: 3px solid blue;
-        box-shadow: 0 0 10px blue;
-        background-color: rgba(0, 0, 255, 0.1);
-        transition: all 0.3s ease;
+    border: 3px solid blue;
+    box-shadow: 0 0 10px blue;
+    background-color: rgba(0, 0, 255, 0.1);
+    transition: all 0.3s ease;
     }
 
     .kebab-menu {
-        position: relative;
-        display: inline-block;
+    position: relative;
+    display: inline-block;
     }
 
     .kebab-btn {
-        font-size: 24px;
-        background: none;
-        border: none;
-        color: #333;
-        cursor: pointer;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
     }
 
     .kebab-dropdown {
-        display: none;
-        position: absolute;
-        top: 25px;
-        right: 0;
-        background-color: white;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        border-radius: 4px;
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: 0;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 4px;
     }
 
-        .kebab-dropdown a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
+    .kebab-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    }
 
-            .kebab-dropdown a:hover {
-                background-color: #ddd;
-            }
+    .kebab-dropdown a:hover {
+    background-color: #ddd;
+    }
 
-        .kebab-dropdown.show {
-            display: block;
-        }
+    .kebab-dropdown.show {
+    display: block;
+    }
 </style>
 
 <h1 style="font-family:Jacquard">Comments</h1>
 
-<QuickGrid Class="table" Items="comments.AsQueryable()">
+<input type="text" class="search-box" placeholder="Search Comments..." @bind="searchTerm" @oninput="FilterComments" />
+
+<QuickGrid Class="table" Items="filteredComments.AsQueryable()">
     <PropertyColumn Property="comment => comment.CommentContent" Title = "Comment" />
     <PropertyColumn Property="comment => comment.CommentStance" Title="Agree/Disagree" />
     <PropertyColumn Property="comment => comment.CommentLike" Title="Likes" />
@@ -92,14 +94,14 @@
         }
 
         <button @onclick="() => ChangeLike(comment, 1)"
-                class="@GetButtonClass(comment.Id, 1)"
-                style="background-color: green; color: white;">
+        class="@GetButtonClass(comment.Id, 1)"
+        style="background-color: green; color: white;">
             Like
         </button>
 
         <button @onclick="() => ChangeLike(comment, -1)"
-                class="@GetButtonClass(comment.Id, -1)"
-                style="background-color: red; color: white;">
+        class="@GetButtonClass(comment.Id, -1)"
+        style="background-color: red; color: white;">
             Dislike
         </button>
 
@@ -113,10 +115,12 @@
 @code {
     private OnlineDebateContext context = default!;
     private List<Comment> comments = new List<Comment>();
+    private List<Comment> filteredComments = new List<Comment>();
 
     private string currentUserId = string.Empty;
     private bool IsAdmin = false;
     private int? activeMenu = null;
+    private string searchTerm = string.Empty;
 
     [SupplyParameterFromQuery]
     public int? argumentId { get; set; }
@@ -142,6 +146,32 @@
         }
 
         comments = query.ToList();
+        filteredComments = comments;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Subscribe to changes of the SearchTerm
+            this.searchTerm = "";
+        }
+        FilterComments();
+        base.OnAfterRender(firstRender);
+    }
+
+    private void FilterComments()
+    {
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            filteredComments = comments;
+        }
+        else
+        {
+            filteredComments = comments.Where(c => c.CommentContent.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        StateHasChanged();
     }
 
     private void ToggleMenu(int commentId)

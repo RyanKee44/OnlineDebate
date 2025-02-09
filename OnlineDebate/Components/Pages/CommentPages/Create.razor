@@ -26,27 +26,27 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="commentcontent" class="form-label">CommentContent:</label> 
+                <label for="commentcontent" class="form-label">Comment:</label> 
                 <InputText id="commentcontent" @bind-Value="Comment.CommentContent" class="form-control" /> 
                 <ValidationMessage For="() => Comment.CommentContent" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="commentstance" class="form-label">CommentStance:</label> 
+                <label for="commentstance" class="form-label">Agree/Disagree:</label> 
                 <InputCheckbox id="commentstance" @bind-Value="Comment.CommentStance" class="form-check-input" /> 
                 <ValidationMessage For="() => Comment.CommentStance" class="text-danger" /> 
             </div>        
             <div class="mb-3" hidden>
-                <label for="commentlike" class="form-label">CommentLike:</label> 
+                <label for="commentlike" class="form-label">Likes:</label> 
                 <InputNumber id="commentlike" @bind-Value="Comment.CommentLike" class="form-control" /> 
                 <ValidationMessage For="() => Comment.CommentLike" class="text-danger" /> 
             </div>        
             <div class="mb-3" hidden>
-                <label for="userid" class="form-label">UserId:</label> 
+                <label for="userid" class="form-label">User:</label> 
                 <InputNumber id="userid" @bind-Value="Comment.UserId" class="form-control" /> 
                 <ValidationMessage For="() => Comment.UserId" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="argumentid" class="form-label">ArgumentId:</label> 
+                <label for="argumentid" class="form-label">Argument:</label> 
                 <InputSelect id="argumentid" @bind-Value="Comment.ArgumentId" class="form-control">
                     <option value="">-- Select Argument --</option>
                     @if (Arguments != null)
@@ -59,7 +59,7 @@
                 </InputSelect>
             </div>        
             <div class="mb-3" hidden>
-                <label for="datecreated" class="form-label">DateCreated:</label> 
+                <label for="datecreated" class="form-label">Date Created:</label> 
                 <InputDate id="datecreated" @bind-Value="Comment.DateCreated" class="form-control" /> 
                 <ValidationMessage For="() => Comment.DateCreated" class="text-danger" /> 
             </div>        

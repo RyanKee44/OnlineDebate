@@ -5,6 +5,7 @@ using OnlineDebate.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using OnlineDebate.Components.Account;
+using Blazored.SessionStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<OnlineDebateContext>(options =>
@@ -40,6 +41,8 @@ builder.Services.AddIdentityCore<OnlineDebateUser>(options => options.SignIn.Req
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<OnlineDebateUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddBlazoredSessionStorage();
 
 var app = builder.Build();
 

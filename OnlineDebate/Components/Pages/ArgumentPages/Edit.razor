@@ -30,12 +30,12 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Argument.Id" value="@Argument.Id" />
                 <div class="mb-3">
-                    <label for="argumentcontent" class="form-label">ArgumentContent:</label>
+                    <label for="argumentcontent" class="form-label">Argument:</label>
                     <InputText id="argumentcontent" @bind-Value="Argument.ArgumentContent" class="form-control" />
                     <ValidationMessage For="() => Argument.ArgumentContent" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="argumentstance" class="form-label">ArgumentStance:</label>
+                    <label for="argumentstance" class="form-label">Agree/Disagree:</label>
                     <InputCheckbox id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-check-input" />
                     <ValidationMessage For="() => Argument.ArgumentStance" class="text-danger" />
                 </div>
@@ -92,7 +92,6 @@ else
     private async Task UpdateArgument()
     {
         using var context = DbFactory.CreateDbContext();
-        Argument.ArgumentContent = Argument.ArgumentContent + "(Edited)";
         context.Attach(Argument!).State = EntityState.Modified;
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

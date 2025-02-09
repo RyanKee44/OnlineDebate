@@ -26,12 +26,12 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="argumentcontent" class="form-label">ArgumentContent:</label> 
+                <label for="argumentcontent" class="form-label">Argument:</label> 
                 <InputText id="argumentcontent" @bind-Value="Argument.ArgumentContent" class="form-control" /> 
                 <ValidationMessage For="() => Argument.ArgumentContent" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="argumentstance" class="form-label">ArgumentStance:</label>
+                <label for="argumentstance" class="form-label">Agree/Disagree:</label>
                 <InputSelect id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-control">
                     <option value="true">Agree</option>
                     <option value="false">Disagree</option>
@@ -49,7 +49,7 @@
                 <ValidationMessage For="() => Argument.OnlineDebateUserId" class="text-danger" />
             </div>        
             <div class="mb-3">
-                <label for="topicid" class="form-label">TopicId:</label>
+                <label for="topicid" class="form-label">Topic:</label>
                 <InputSelect id="topicid" @bind-Value="Argument.TopicId" class="form-control">
                     <option value="">-- Select Topic --</option>
                     @if (Topics != null)

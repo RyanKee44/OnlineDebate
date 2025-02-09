@@ -30,17 +30,17 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Comment.Id" value="@Comment.Id" />
                 <div class="mb-3">
-                    <label for="commentcontent" class="form-label">CommentContent:</label>
+                    <label for="commentcontent" class="form-label">Comment:</label>
                     <InputText id="commentcontent" @bind-Value="Comment.CommentContent" class="form-control" />
                     <ValidationMessage For="() => Comment.CommentContent" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="commentstance" class="form-label">CommentStance:</label>
+                    <label for="commentstance" class="form-label">Agree/Disagree:</label>
                     <InputCheckbox id="commentstance" @bind-Value="Comment.CommentStance" class="form-check-input" />
                     <ValidationMessage For="() => Comment.CommentStance" class="text-danger" />
                 </div>
                 <div class="mb-3" hidden>
-                    <label for="commentlike" class="form-label">CommentLike:</label>
+                    <label for="commentlike" class="form-label">Likes:</label>
                     <InputNumber id="commentlike" @bind-Value="Comment.CommentLike" class="form-control" />
                     <ValidationMessage For="() => Comment.CommentLike" class="text-danger" />
                 </div>

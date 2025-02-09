@@ -16,6 +16,8 @@
 
 <h1 style="font-family:Jacquard">Arguments</h1>
 
+<input type="text" class="search-box" placeholder="Search Arguments..." @bind="searchTerm" @oninput="FilterArguments" />
+
 <style>
     body {
         background-color: lightyellow;
@@ -69,7 +71,7 @@
         }
 </style>
 
-<QuickGrid Class="table" Items="arguments.AsQueryable()">
+<QuickGrid Class="table" Items="filteredArguments.AsQueryable()">
     <PropertyColumn Property="argument => argument.ArgumentContent" Title="Argument" />
     <PropertyColumn Property="argument => argument.ArgumentStance" Title="Agree/Disagree" />
     <PropertyColumn Property="argument => argument.ArgumentLike" Title="Likes" />
@@ -127,6 +129,9 @@
     [SupplyParameterFromQuery]
     public int? TopicId { get; set; }  // TopicId from query parameter
 
+    private string searchTerm = string.Empty;
+    private List<Argument> filteredArguments = new();
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -149,6 +154,31 @@
         }
 
         arguments = query.ToList();
+        filteredArguments = arguments;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Subscribe to changes of the SearchTerm
+            this.searchTerm = "";
+        }
+        FilterArguments();
+        base.OnAfterRender(firstRender);
+    }
+
+    private void FilterArguments()
+    {
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            filteredArguments = arguments; // Show all arguments
+        }
+        else
+        {
+            filteredArguments = arguments.Where(a => a.ArgumentContent.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        StateHasChanged(); // This is the KEY missing line!
     }
 
     private void ToggleMenu(int argumentId)

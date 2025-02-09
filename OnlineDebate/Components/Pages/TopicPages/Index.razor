@@ -7,6 +7,7 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @attribute [Authorize(Roles = "Administrator, User")]
+@rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle> @*Index Page*@
 
@@ -18,9 +19,26 @@
 
 <h1 style="font-family:Jacquard">Debates</h1>
 
+<h2>Bookmarked Topics</h2>
+@if (bookmarkedTopics.Any())
+{
+    <QuickGrid Class="table" Items="bookmarkedTopics.AsQueryable()">
+        <PropertyColumn Property="topic => topic.TopicName" Title="Topic" />
+        <PropertyColumn Property="topic => topic.TopicCategory" Title="Category" />
+        <PropertyColumn Property="topic => topic.TopicDescription" Title="Description" />
+        <PropertyColumn Property="topic => topic.TopicRules" Title="Rules" />
+        <PropertyColumn Property="topic => topic.OnlineDebateUser.FirstName" Title="User" />
+        <PropertyColumn Property="topic => topic.DateCreated" Title="Date Created" />
+    </QuickGrid>
+}
+else
+{
+    <p>No bookmarked topics yet.</p>
+}
 
+<h2>All Topics</h2>
 
-<QuickGrid Class="table" Items="context.Topic">
+<QuickGrid Class="table" Items="unbookmarkedTopics.AsQueryable()">
     <PropertyColumn Property="topic => topic.TopicName" Title="Topic" />
     <PropertyColumn Property="topic => topic.TopicCategory" Title="Category" />
     <PropertyColumn Property="topic => topic.TopicDescription" Title="Description" />
@@ -29,6 +47,10 @@
     <PropertyColumn Property="topic => topic.DateCreated" Title="Date Created" />
 
     <TemplateColumn Context="topic">
+        <button @onclick="() => ToggleBookmark(topic)">
+            @(bookmarkedTopics.Contains(topic) ? "Remove Bookmark" : "Bookmark")
+        </button>
+        |
         <a href="@($"topics/edit?id={topic.Id}")">Edit</a> |
         <a href="@($"topics/details?id={topic.Id}")">Details</a> |
         <AuthorizeView Roles="Administrator">
@@ -42,18 +64,36 @@
     <button style="background-color:mediumseagreen; color:white; border-radius:200px; width:150px">Create New</button>
 </NavLink>
 
-
-
-
 @code {
     private OnlineDebateContext context = default!;
+    private List<Topic> allTopics = new();
+    private List<Topic> bookmarkedTopics = new();
+    private List<Topic> unbookmarkedTopics = new();
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
-        var arguments = context.Topic
-        .Include(a => a.OnlineDebateUser)
-        .ToList();
+        allTopics = context.Topic.Include(a => a.OnlineDebateUser).ToList();
+        UpdateTopicLists();
+    }
+
+    private void ToggleBookmark(Topic topic)
+    {
+        if (bookmarkedTopics.Contains(topic))
+        {
+            bookmarkedTopics.Remove(topic);
+        }
+        else
+        {
+            bookmarkedTopics.Add(topic);
+        }
+        UpdateTopicLists();
+        StateHasChanged();
+    }
+
+    private void UpdateTopicLists()
+    {
+        unbookmarkedTopics = allTopics.Except(bookmarkedTopics).ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();

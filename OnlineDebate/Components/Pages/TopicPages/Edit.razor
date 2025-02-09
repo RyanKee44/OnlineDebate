@@ -29,31 +29,31 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Topic.Id" value="@Topic.Id" />
                 <div class="mb-3">
-                    <label for="topicname" class="form-label">TopicName:</label>
+                    <label for="topicname" class="form-label">Topic:</label>
                     <InputText id="topicname" @bind-Value="Topic.TopicName" class="form-control" />
                     <ValidationMessage For="() => Topic.TopicName" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="topiccategory" class="form-label">TopicCategory:</label>
+                    <label for="topiccategory" class="form-label">Category:</label>
                     <InputText id="topiccategory" @bind-Value="Topic.TopicCategory" class="form-control" />
                     <ValidationMessage For="() => Topic.TopicCategory" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="topicdescription" class="form-label">TopicDescription:</label>
+                    <label for="topicdescription" class="form-label">Description:</label>
                     <InputText id="topicdescription" @bind-Value="Topic.TopicDescription" class="form-control" />
                     <ValidationMessage For="() => Topic.TopicDescription" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="topicrules" class="form-label">TopicRules:</label>
+                    <label for="topicrules" class="form-label">Rules:</label>
                     <InputText id="topicrules" @bind-Value="Topic.TopicRules" class="form-control" />
                     <ValidationMessage For="() => Topic.TopicRules" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="userid" class="form-label">UserId:</label>
                     <InputNumber id="userid" @bind-Value="Topic.UserId" class="form-control" />
                     <ValidationMessage For="() => Topic.UserId" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="datecreated" class="form-label">DateCreated:</label>
                     <InputDate id="datecreated" @bind-Value="Topic.DateCreated" class="form-control" />
                     <ValidationMessage For="() => Topic.DateCreated" class="text-danger" />
