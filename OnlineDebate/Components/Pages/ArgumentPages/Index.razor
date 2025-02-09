@@ -97,7 +97,9 @@
 
                 </div>
             </div>
+
         }
+        <a href="@($"reports?commentId={argument.Id}")" style="background-color: orange; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none;">Report</a>
 
         <button @onclick="() => ChangeLike(argument, 1)" 
                 class="@GetButtonClass(argument.Id, 1)" 

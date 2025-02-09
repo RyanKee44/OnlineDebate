@@ -3,6 +3,7 @@
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Edit</PageTitle>
 
@@ -82,6 +83,15 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         context.Attach(Notifications!).State = EntityState.Modified;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Notifications.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
 
         try
         {
