@@ -27,6 +27,7 @@ namespace OnlineDebate.Data
             builder.ApplyConfiguration(new CommentSeed());
             builder.ApplyConfiguration(new ReportSeed());
             builder.ApplyConfiguration(new NotificationsSeed());
+            builder.ApplyConfiguration(new LeaderboardSeed());
             builder.ApplyConfiguration(new RoleSeed());
             builder.ApplyConfiguration(new UserSeed());
             builder.ApplyConfiguration(new UserRoleSeed());

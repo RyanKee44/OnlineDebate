@@ -12,6 +12,8 @@ namespace OnlineDebate.Domain
 
         public string? OnlineDebateUserId { get; set; }
 
+        public DateTime? LastEdited { get; set; }
+
 
         public Topic Topic { get; set; }
 

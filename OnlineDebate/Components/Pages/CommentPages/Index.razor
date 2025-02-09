@@ -6,6 +6,7 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Index</PageTitle>
 
@@ -13,6 +14,53 @@
     body {
         background-color: lightyellow;
     }
+
+    .blue-outline {
+        border: 3px solid blue;
+        box-shadow: 0 0 10px blue;
+        background-color: rgba(0, 0, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .kebab-menu {
+        position: relative;
+        display: inline-block;
+    }
+
+    .kebab-btn {
+        font-size: 24px;
+        background: none;
+        border: none;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .kebab-dropdown {
+        display: none;
+        position: absolute;
+        top: 25px;
+        right: 0;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+    }
+
+        .kebab-dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .kebab-dropdown a:hover {
+                background-color: #ddd;
+            }
+
+        .kebab-dropdown.show {
+            display: block;
+        }
 </style>
 
 <h1 style="font-family:Jacquard">Comments</h1>
@@ -26,12 +74,35 @@
     <PropertyColumn Property="comment => comment.DateCreated" Title="Date" />
 
     <TemplateColumn Context="comment">
-        <a href="@($"comments/edit?id={comment.Id}")">Edit</a> |
         <a href="@($"comments/details?id={comment.Id}")">Details</a> |
-        <a href="@($"comments/delete?id={comment.Id}")">Delete</a>
 
-        <button @onclick="() => ChangeLike(comment, 1)" style="background-color: green; color: white;">Like</button>
-        <button @onclick="() => ChangeLike(comment, -1)" style="background-color: red; color: white;">Dislike</button>
+        @if (comment.OnlineDebateUser.FirstName == currentUserId || IsAdmin)
+        {
+            <div class="kebab-menu">
+                <button class="kebab-btn" @onclick="() => ToggleMenu(comment.Id)">
+                    &#x22EE; <!-- Vertical Ellipsis (three dots) -->
+                </button>
+
+                <div class="kebab-dropdown @(activeMenu == comment.Id ? "show" : "")">
+                    <a href="@($"comments/edit?id={comment.Id}")">Edit</a>
+                    <a href="@($"comments/delete?id={comment.Id}")">Delete</a>
+
+                </div>
+            </div>
+        }
+
+        <button @onclick="() => ChangeLike(comment, 1)"
+                class="@GetButtonClass(comment.Id, 1)"
+                style="background-color: green; color: white;">
+            Like
+        </button>
+
+        <button @onclick="() => ChangeLike(comment, -1)"
+                class="@GetButtonClass(comment.Id, -1)"
+                style="background-color: red; color: white;">
+            Dislike
+        </button>
+
     </TemplateColumn>
 </QuickGrid>
 
@@ -43,11 +114,21 @@
     private OnlineDebateContext context = default!;
     private List<Comment> comments = new List<Comment>();
 
+    private string currentUserId = string.Empty;
+    private bool IsAdmin = false;
+    private int? activeMenu = null;
+
     [SupplyParameterFromQuery]
     public int? argumentId { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        context = DbFactory.CreateDbContext();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        currentUserId = user.Identity.Name?.Split('@')[0] ?? "User";
+        IsAdmin = user?.IsInRole("Administrator") ?? false;
         context = DbFactory.CreateDbContext();
 
         var query = context.Comment
@@ -63,14 +144,53 @@
         comments = query.ToList();
     }
 
+    private void ToggleMenu(int commentId)
+    {
+        // Toggle the visibility of the menu
+        activeMenu = activeMenu == commentId ? null : commentId;
+    }
+
+    private Dictionary<int, int> userVotes = new();
+
+    private string GetButtonClass(int commentId, int voteType)
+    {
+        if (userVotes.ContainsKey(commentId) && userVotes[commentId] == voteType)
+        {
+            return "blue-outline";  // Apply blue outline when the button is pressed
+        }
+        return string.Empty;  // No outline if button is not pressed
+    }
+
     private async Task ChangeLike(Comment comment, int change)
     {
-        comment.CommentLike += change;
+        int commentId = comment.Id;
+
+        if (userVotes.TryGetValue(commentId, out int previousVote))
+        {
+            if (previousVote == change)
+            {
+                comment.CommentLike -= change;
+                userVotes.Remove(commentId);
+            }
+            else
+            {
+                comment.CommentLike -= previousVote;
+                comment.CommentLike += change;
+
+                userVotes[commentId] = change;
+            }
+        }
+        else
+        {
+            comment.CommentLike += change;
+            userVotes[commentId] = change;
+        }
 
         context.Comment.Update(comment);
         await context.SaveChangesAsync();
 
-        var updatedComment = comments.First(c => c.Id == comment.Id);
+        // Update the UI with the new like count
+        var updatedComment = comments.First(a => a.Id == comment.Id);
         updatedComment.CommentLike = comment.CommentLike;
 
         StateHasChanged();

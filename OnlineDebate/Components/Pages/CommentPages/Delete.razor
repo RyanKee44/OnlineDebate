@@ -3,6 +3,9 @@
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
 
 <PageTitle>Delete</PageTitle>
 
@@ -56,19 +59,38 @@
 
 @code {
     private Comment? comment;
+    private string currentUserId = string.Empty;
+    private bool IsAdmin = false;
 
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        currentUserId = user.Identity.Name?.Split('@')[0] ?? "User";
+        IsAdmin = user?.IsInRole("Administrator") ?? false;
+
         using var context = DbFactory.CreateDbContext();
         comment = await context.Comment.FirstOrDefaultAsync(m => m.Id == Id);
+
+        var query = context.Comment
+         .Include(a => a.OnlineDebateUser)
+         .ToList();
 
         if (comment is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
+
+
+        if (comment.OnlineDebateUser is null || comment.OnlineDebateUser.FirstName != currentUserId && !IsAdmin)
+        {
+            NavigationManager.NavigateTo("/comments");
+        }
+
+
     }
 
     private async Task DeleteComment()

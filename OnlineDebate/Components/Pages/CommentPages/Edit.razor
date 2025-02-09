@@ -3,6 +3,7 @@
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Edit</PageTitle>
 
@@ -38,22 +39,22 @@ else
                     <InputCheckbox id="commentstance" @bind-Value="Comment.CommentStance" class="form-check-input" />
                     <ValidationMessage For="() => Comment.CommentStance" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="commentlike" class="form-label">CommentLike:</label>
                     <InputNumber id="commentlike" @bind-Value="Comment.CommentLike" class="form-control" />
                     <ValidationMessage For="() => Comment.CommentLike" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="userid" class="form-label">UserId:</label>
                     <InputNumber id="userid" @bind-Value="Comment.UserId" class="form-control" />
                     <ValidationMessage For="() => Comment.UserId" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="argumentid" class="form-label">ArgumentId:</label>
                     <InputNumber id="argumentid" @bind-Value="Comment.ArgumentId" class="form-control" />
                     <ValidationMessage For="() => Comment.ArgumentId" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="datecreated" class="form-label">DateCreated:</label>
                     <InputDate id="datecreated" @bind-Value="Comment.DateCreated" class="form-control" />
                     <ValidationMessage For="() => Comment.DateCreated" class="text-danger" />
@@ -92,6 +93,15 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         context.Attach(Comment!).State = EntityState.Modified;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Comment.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
 
         try
         {

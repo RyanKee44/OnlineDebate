@@ -4,7 +4,8 @@
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Administrator")]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
 
 <PageTitle>Delete</PageTitle>
 
@@ -58,18 +59,34 @@
 
 @code {
     private Argument? argument;
+    private string currentUserId = string.Empty;
+    private bool IsAdmin = false;
 
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        currentUserId = user.Identity.Name?.Split('@')[0] ?? "User";
+        IsAdmin = user?.IsInRole("Administrator") ?? false;
+
         using var context = DbFactory.CreateDbContext();
         argument = await context.Argument.FirstOrDefaultAsync(m => m.Id == Id);
+
+        var query = context.Argument
+         .Include(a => a.OnlineDebateUser)
+         .ToList();
 
         if (argument is null)
         {
             NavigationManager.NavigateTo("notfound");
+        }
+
+        if (argument.OnlineDebateUser is null || argument.OnlineDebateUser.FirstName != currentUserId && !IsAdmin)
+        {
+            NavigationManager.NavigateTo("/arguments");
         }
     }
 

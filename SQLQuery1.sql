@@ -1,1 +1,1 @@
-SELECT * FROM AspNetUsers;
+DELETE FROM dbo.Leaderboard;

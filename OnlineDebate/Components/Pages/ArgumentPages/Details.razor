@@ -30,9 +30,9 @@
             <dt class="col-sm-2">ArgumentLike</dt>
             <dd class="col-sm-10">@argument.ArgumentLike</dd>
             <dt class="col-sm-2">UserId</dt>
-            <dd class="col-sm-10">@argument.UserId</dd>
+            <dd class="col-sm-10">@argument.OnlineDebateUser.FirstName</dd>
             <dt class="col-sm-2">TopicId</dt>
-            <dd class="col-sm-10">@argument.TopicId</dd>
+            <dd class="col-sm-10">@argument.Topic.TopicName</dd>
             <dt class="col-sm-2">DateCreated</dt>
             <dd class="col-sm-10">@argument.DateCreated</dd>
         </dl>
@@ -53,6 +53,11 @@
     {
         using var context = DbFactory.CreateDbContext();
         argument = await context.Argument.FirstOrDefaultAsync(m => m.Id == Id);
+
+        var query = context.Argument
+          .Include(a => a.Topic)
+          .Include(a => a.OnlineDebateUser)
+          .ToList();
 
         if (argument is null)
         {

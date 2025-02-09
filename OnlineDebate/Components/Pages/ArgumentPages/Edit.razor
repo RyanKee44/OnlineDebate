@@ -3,6 +3,7 @@
 @using OnlineDebate.Domain
 @inject IDbContextFactory<OnlineDebate.Data.OnlineDebateContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Edit</PageTitle>
 
@@ -38,22 +39,22 @@ else
                     <InputCheckbox id="argumentstance" @bind-Value="Argument.ArgumentStance" class="form-check-input" />
                     <ValidationMessage For="() => Argument.ArgumentStance" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="argumentlike" class="form-label">ArgumentLike:</label>
                     <InputNumber id="argumentlike" @bind-Value="Argument.ArgumentLike" class="form-control" />
                     <ValidationMessage For="() => Argument.ArgumentLike" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="userid" class="form-label">UserId:</label>
                     <InputNumber id="userid" @bind-Value="Argument.UserId" class="form-control" />
                     <ValidationMessage For="() => Argument.UserId" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="topicid" class="form-label">TopicId:</label>
                     <InputNumber id="topicid" @bind-Value="Argument.TopicId" class="form-control" />
                     <ValidationMessage For="() => Argument.TopicId" class="text-danger" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden>
                     <label for="datecreated" class="form-label">DateCreated:</label>
                     <InputDate id="datecreated" @bind-Value="Argument.DateCreated" class="form-control" />
                     <ValidationMessage For="() => Argument.DateCreated" class="text-danger" />
@@ -91,11 +92,25 @@ else
     private async Task UpdateArgument()
     {
         using var context = DbFactory.CreateDbContext();
+        Argument.ArgumentContent = Argument.ArgumentContent + "(Edited)";
         context.Attach(Argument!).State = EntityState.Modified;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // Set the OnlineDebateUserId to the current user's username or another identifier
+            Argument.OnlineDebateUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        Argument.LastEdited = DateTime.Now;
 
         try
         {
             await context.SaveChangesAsync();
+
         }
         catch (DbUpdateConcurrencyException)
         {

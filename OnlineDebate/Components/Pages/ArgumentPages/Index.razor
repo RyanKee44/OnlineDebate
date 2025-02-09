@@ -8,6 +8,9 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Administrator, User")]
 @rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
 
 <PageTitle>Arguments</PageTitle>
 
@@ -17,6 +20,53 @@
     body {
         background-color: lightyellow;
     }
+
+    .blue-outline {
+        border: 3px solid blue;
+        box-shadow: 0 0 10px blue;
+        background-color: rgba(0, 0, 255, 0.1); 
+        transition: all 0.3s ease;
+    }
+
+    .kebab-menu {
+        position: relative;
+        display: inline-block;
+    }
+
+    .kebab-btn {
+        font-size: 24px;
+        background: none;
+        border: none;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .kebab-dropdown {
+        display: none;
+        position: absolute;
+        top: 25px;
+        right: 0;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+    }
+
+        .kebab-dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .kebab-dropdown a:hover {
+                background-color: #ddd;
+            }
+
+        .kebab-dropdown.show {
+            display: block;
+        }
 </style>
 
 <QuickGrid Class="table" Items="arguments.AsQueryable()">
@@ -28,15 +78,37 @@
     <PropertyColumn Property="argument => argument.DateCreated" Title="Date Added" />
 
     <TemplateColumn Context="argument">
-        <a href="@($"arguments/edit?id={argument.Id}")">Edit</a> |
-        <a href="@($"arguments/details?id={argument.Id}")">Details</a> |
-        <AuthorizeView Roles="Administrator">
-            <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
-        </AuthorizeView>
 
+        <a href="@($"arguments/details?id={argument.Id}")">Details</a> |
         <a href="@($"comments?argumentId={argument.Id}")">View Comments</a>
-        <button @onclick="() => ChangeLike(argument, 1)" style="background-color: green; color: white;">Like</button>
-        <button @onclick="() => ChangeLike(argument, -1)" style="background-color: red; color: white;">Dislike</button>
+
+        @if (argument.OnlineDebateUser.FirstName == currentUserId || IsAdmin)
+        {
+            <div class="kebab-menu">
+                <button class="kebab-btn" @onclick="() => ToggleMenu(argument.Id)">
+                    &#x22EE;
+                </button>
+
+                <div class="kebab-dropdown @(activeMenu == argument.Id ? "show" : "")">
+                    <a href="@($"arguments/edit?id={argument.Id}")">Edit</a>
+                    <a href="@($"arguments/delete?id={argument.Id}")">Delete</a>
+
+                </div>
+            </div>
+        }
+
+        <button @onclick="() => ChangeLike(argument, 1)" 
+                class="@GetButtonClass(argument.Id, 1)" 
+                style="background-color: green; color: white;">
+            Like
+        </button>
+
+        <button @onclick="() => ChangeLike(argument, -1)" 
+                class="@GetButtonClass(argument.Id, -1)" 
+                style="background-color: red; color: white;">
+            Dislike
+        </button>
+
     </TemplateColumn>
 </QuickGrid>
 
@@ -48,11 +120,22 @@
     private OnlineDebateContext context = default!;
     private List<Argument> arguments = new List<Argument>();
 
+    private string currentUserId = string.Empty;
+    private bool IsAdmin = false;
+    private int? activeMenu = null;
+
     [SupplyParameterFromQuery]
     public int? TopicId { get; set; }  // TopicId from query parameter
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        currentUserId = user.Identity.Name?.Split('@')[0] ?? "User";
+        IsAdmin = user?.IsInRole("Administrator") ?? false;
+
+
         context = DbFactory.CreateDbContext();
 
         var query = context.Argument
@@ -68,18 +151,59 @@
         arguments = query.ToList();
     }
 
+    private void ToggleMenu(int argumentId)
+    {
+        // Toggle the visibility of the menu
+        activeMenu = activeMenu == argumentId ? null : argumentId;
+    }
+
+    private Dictionary<int, int> userVotes = new(); 
+
+    private string GetButtonClass(int argumentId, int voteType)
+    {
+        if (userVotes.ContainsKey(argumentId) && userVotes[argumentId] == voteType)
+        {
+            return "blue-outline";  // Apply blue outline when the button is pressed
+        }
+        return string.Empty;  // No outline if button is not pressed
+    }
+
     private async Task ChangeLike(Argument argument, int change)
     {
-        argument.ArgumentLike += change;
+        int argumentId = argument.Id;
+
+        if (userVotes.TryGetValue(argumentId, out int previousVote))
+        {
+            if (previousVote == change)
+            {
+                argument.ArgumentLike -= change; 
+                userVotes.Remove(argumentId); 
+            }
+            else
+            {
+                argument.ArgumentLike -= previousVote; 
+                argument.ArgumentLike += change; 
+
+                userVotes[argumentId] = change;
+            }
+        }
+        else
+        {
+            argument.ArgumentLike += change;
+            userVotes[argumentId] = change;
+        }
 
         context.Argument.Update(argument);
         await context.SaveChangesAsync();
 
+        // Update the UI with the new like count
         var updatedArgument = arguments.First(a => a.Id == argument.Id);
         updatedArgument.ArgumentLike = argument.ArgumentLike;
 
         StateHasChanged();
     }
+
+
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

@@ -30,9 +30,9 @@
             <dt class="col-sm-2">CommentLike</dt>
             <dd class="col-sm-10">@comment.CommentLike</dd>
             <dt class="col-sm-2">UserId</dt>
-            <dd class="col-sm-10">@comment.UserId</dd>
+            <dd class="col-sm-10">@comment.OnlineDebateUser.FirstName</dd>
             <dt class="col-sm-2">ArgumentId</dt>
-            <dd class="col-sm-10">@comment.ArgumentId</dd>
+            <dd class="col-sm-10">@comment.Argument.ArgumentContent</dd>
             <dt class="col-sm-2">DateCreated</dt>
             <dd class="col-sm-10">@comment.DateCreated</dd>
         </dl>
@@ -53,6 +53,11 @@
     {
         using var context = DbFactory.CreateDbContext();
         comment = await context.Comment.FirstOrDefaultAsync(m => m.Id == Id);
+
+        var query = context.Comment
+      .Include(a => a.Argument)
+      .Include(a => a.OnlineDebateUser)
+      .ToList();
 
         if (comment is null)
         {
